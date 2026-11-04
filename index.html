@@ -46,13 +46,14 @@
 .news-reader .reader-source{display:inline-block;margin-top:8px;color:var(--cyan);font-weight:800}
 
 
-/* Cenário discreto inspirado em uma vila de anime */
-body{background:#edf2e8 url('./konoha-background.svg') center bottom/cover fixed no-repeat;color:var(--text)}
-.top{background:rgba(248,250,242,.94);border-bottom:1px solid #cbd8c8}
-.hero,.trailer-panel,.news,.anime,.modal-box{box-shadow:0 8px 24px rgba(48,67,54,.12);backdrop-filter:none}
-.news-reader .reader-text{color:#435e53}
-.news-reader .reader-note{background:#eaf4e9;border-color:#c4dccb;color:#587166}
-@media(max-width:600px){body{background-attachment:scroll;background-position:center bottom;background-size:auto 100vh}.top{background:rgba(248,250,242,.97)}}
+/* Novo cenário: vila acolhedora, casinha, árvores e folhas ao vento */
+body{background:#080d13 url('./konoha-background.svg') center center/cover fixed no-repeat;color:var(--text)}
+body:before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(5,12,18,.18),rgba(5,12,18,.48))}
+.top{background:rgba(7,13,22,.88);border-bottom:1px solid #ffffff20}
+.hero,.trailer-panel,.news,.anime,.modal-box{box-shadow:0 10px 30px rgba(0,0,0,.28);backdrop-filter:blur(8px)}
+.news-reader .reader-text{color:#d8dbea}
+.news-reader .reader-note{background:#1a2033;border-color:var(--line);color:var(--muted)}
+@media(max-width:600px){body{background-attachment:scroll;background-position:center center;background-size:auto 100vh}.top{background:rgba(7,13,22,.94)}}
 </style>
 </head>
 <body>\n
