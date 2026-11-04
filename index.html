@@ -55,6 +55,43 @@ body:before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradi
 .floating-leaves i{position:absolute;top:-12vh;left:var(--x);font-style:normal;font-size:var(--size);color:#5b9d45;text-shadow:0 2px 4px #28452a55;opacity:0;animation:leaf-drift var(--duration) linear var(--delay) infinite}
 @keyframes leaf-drift{0%{transform:translate3d(0,-5vh,0) rotate(0deg);opacity:0}10%{opacity:.78}50%{transform:translate3d(var(--sway),55vh,0) rotate(240deg)}90%{opacity:.72}100%{transform:translate3d(calc(var(--sway)*-.7),115vh,0) rotate(520deg);opacity:0}}
 @media(max-width:600px){body{background-attachment:scroll;background-position:center top}.floating-leaves i{font-size:var(--mobile-size)}}
+
+/* Paleta clara inspirada na Vila da Folha */
+:root{--bg:#d9edf2;--panel:#fff8edeb;--panel2:#e8f4ed;--text:#263b39;--muted:#637b78;--pink:#e87948;--cyan:#347f62;--line:#b8d5c9}
+body{color:var(--text)}
+.top{background:#eaf6e9df;border-bottom:1px solid #729b8066}
+.brand{color:#294b3d}.brand span{color:#df7047}
+.links{color:#46665a}.links a:hover{color:#d96d43}
+.btn{background:linear-gradient(110deg,#e87948,#e9a34f);box-shadow:0 5px 14px #b76a3c35}
+.btn.secondary{background:#ffffffc9;border:1px solid #b6cdbf;color:#355c4b}
+.section h2{color:#294b3d}
+.section-head p,.status{color:#58736b}
+.chip{background:#f5fbf4;border-color:#b8d5c9;color:#527267}
+.chip.active,.chip:hover{background:#d9eadb;border-color:#76a786;color:#315b43}
+.anime,.news{background:#fff9f0ed;border-color:#b9d5c8;color:#29433a}
+.anime:hover,.news:hover{border-color:#80ad8e;box-shadow:0 12px 26px #456f5930}
+.poster-wrap{background:#e6f1e9}
+.info h3,.news h3{color:#29483b}
+.meta,.news p{color:#62776f}
+.play{background:#315c49dc;border-color:#ffffff88;color:#fff}
+.score{color:#b87522}
+.news small,.shelf-label{color:#347f62}
+.news .news-source,.news a{color:#d76f45}
+.shelf .shelf-tag{background:#43845e}
+.trailer-panel{background:linear-gradient(135deg,#e7f3e8,#fff4e6);border-color:#b8d5c9;color:#29483b}
+.video-info p{color:#62776f}
+.search input{background:#fffaf2;border-color:#b8d5c9;color:#29483b}
+.search input::placeholder{color:#81958d}
+.footer{border-color:#9dbfae;color:#526e62}
+.modal-box{background:#fffaf2;color:#29483b;border-color:#b8d5c9}
+.close{background:#e4f0e5;color:#315b43}
+.detail p{color:#62776f}
+.detail a,.reader-source{color:#347f62}
+.news-reader .reader-text{color:#435e53}
+.news-reader .reader-note{background:#eaf4e9;border-color:#c4dccb;color:#587166}
+.news-reader .reader-kicker{color:#347f62}
+.story-hero{border-color:#ffffff80}
+@media(max-width:600px){.top{background:#eaf6e9f2}}
 </style>
 </head>
 <body>\n<div class="floating-leaves" aria-hidden="true"><i style="--x:7%;--size:21px;--mobile-size:15px;--duration:17s;--delay:-4s;--sway:45px">🍃</i><i style="--x:24%;--size:17px;--mobile-size:13px;--duration:22s;--delay:-12s;--sway:-55px">🍃</i><i style="--x:43%;--size:23px;--mobile-size:16px;--duration:19s;--delay:-8s;--sway:65px">🍃</i><i style="--x:62%;--size:16px;--mobile-size:12px;--duration:24s;--delay:-17s;--sway:-45px">🍃</i><i style="--x:81%;--size:20px;--mobile-size:14px;--duration:18s;--delay:-2s;--sway:50px">🍃</i><i style="--x:94%;--size:16px;--mobile-size:12px;--duration:21s;--delay:-10s;--sway:-60px">🍃</i></div>
