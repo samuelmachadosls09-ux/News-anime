@@ -77,8 +77,9 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 #novidades .news .news-source{font-size:12px}
 @media(max-width:560px){#novidades{padding:22px 13px 17px;margin-top:16px}#novidades .news-grid{gap:10px}#novidades .news img{height:115px}#novidades .news-body{padding:11px}}
 
-/* Mini TV fixa: trailers de anime no canto superior direito */
-.mini-tv{position:relative!important;top:auto!important;right:auto!important;z-index:2;width:218px;margin:12px 4% 0 auto;padding:8px;background:rgba(8,12,24,.94);border:1px solid #65e6df88;border-radius:13px;box-shadow:0 10px 32px #000b;backdrop-filter:blur(12px)}
+/* Mini TV integrada ao cabeçalho, ao lado da marca */
+.nav{min-height:126px;height:auto;padding:10px 0;gap:14px}
+.mini-tv{position:relative!important;top:auto!important;right:auto!important;z-index:2;flex:0 0 132px;width:132px;margin:0;padding:6px;background:rgba(8,12,24,.94);border:1px solid #65e6df88;border-radius:11px;box-shadow:0 8px 24px #0008;backdrop-filter:blur(12px)}
 .mini-tv[hidden]{display:none!important}
 .mini-tv-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:1px 2px 7px;color:#f7f7fc;font-size:10px;font-weight:900;letter-spacing:1px}
 .mini-tv-live{color:#65e6df;font-size:9px}
@@ -86,14 +87,17 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 .mini-tv-screen iframe{display:block;width:100%;height:100%;border:0}
 .mini-tv-sound{display:block;width:100%;margin-top:7px;padding:6px 8px;border:1px solid #65e6df77;border-radius:7px;background:#142238;color:#eafcff;font-size:10px;font-weight:800;cursor:pointer}
 .mini-tv-sound:hover{background:#1c3450}
-@media(max-width:560px){.mini-tv{width:142px;margin:10px 4% 0 auto;padding:6px;border-radius:10px}.mini-tv-head{font-size:9px;padding-bottom:5px}.mini-tv-live{font-size:8px}.mini-tv-sound{font-size:9px;padding:5px 3px;margin-top:5px}}
+@media(max-width:560px){.nav{min-height:112px;height:auto;padding:8px 0;gap:8px;flex-wrap:wrap;justify-content:space-between}.brand{font-size:20px}.mini-tv{flex-basis:108px;width:108px;padding:5px;border-radius:9px}.mini-tv-head{font-size:8px;padding-bottom:4px}.mini-tv-live{font-size:7px}.mini-tv-sound{font-size:8px;padding:4px 2px;margin-top:4px}.links{width:100%;justify-content:center;gap:20px;font-size:12px}}
 
 </style>
 </head>
 <body>
 <div class="leaf-drift" aria-hidden="true"><span style="--x:8%;--duration:19s;--delay:-7s"></span><span style="--x:22%;--duration:23s;--delay:-15s"></span><span style="--x:39%;--duration:21s;--delay:-4s"></span><span style="--x:56%;--duration:26s;--delay:-19s"></span><span style="--x:71%;--duration:20s;--delay:-11s"></span><span style="--x:86%;--duration:24s;--delay:-2s"></span><span style="--x:95%;--duration:22s;--delay:-16s"></span></div>\n
-<header class="top"><div class="wrap nav"><a class="brand" href="#">NEWS<span>ANIME</span></a><nav class="links"><a href="#explorar">Animes</a><a href="#trailers">Trailers</a><a href="#novidades">Novidades</a></nav></div></header>
-<aside class="mini-tv" id="miniTv" aria-label="News Anime TV" hidden>
+<header class="top"><div class="wrap nav"><a class="brand" href="#">NEWS<span>ANIME</span></a><aside class="mini-tv" id="miniTv" aria-label="News Anime TV" hidden>
+ <div class="mini-tv-head"><span>📺 ANIME TV</span><span class="mini-tv-live">TRAILERS</span></div>
+ <div class="mini-tv-screen" id="miniTvFrame"></div>
+ <button class="mini-tv-sound" id="miniTvSound" type="button" aria-pressed="false">🔇 Ligar som</button>
+</aside><nav class="links"><a href="#explorar">Animes</a><a href="#trailers">Trailers</a><a href="#novidades">Novidades</a></nav></div></header>
  <div class="mini-tv-head"><span>📺 ANIME TV</span><span class="mini-tv-live">TRAILERS</span></div>
  <div class="mini-tv-screen" id="miniTvFrame"></div>
  <button class="mini-tv-sound" id="miniTvSound" type="button" aria-pressed="false">🔇 Ligar som</button>
