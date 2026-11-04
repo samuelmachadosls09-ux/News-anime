@@ -54,9 +54,20 @@ body:before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradi
 .news-reader .reader-text{color:#d8dbea}
 .news-reader .reader-note{background:#1a2033;border-color:var(--line);color:var(--muted)}
 @media(max-width:600px){body{background-attachment:scroll;background-position:center center;background-size:auto 100vh}.top{background:rgba(7,13,22,.94)}}
+
+/* Detalhe ambiental: folhas discretas passando diante da paisagem */
+body>.leaf-drift{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+body>header,body>main,body>footer{position:relative;z-index:1}
+.leaf-drift span{position:absolute;top:-8vh;left:var(--x);width:13px;height:20px;border-radius:100% 0 100% 0;background:linear-gradient(145deg,#b7d978,#4e9a58);opacity:.42;filter:drop-shadow(0 1px 2px #10251566);transform:rotate(35deg);animation:leaf-float var(--duration) linear var(--delay) infinite}
+.leaf-drift span:nth-child(2n){width:10px;height:15px;background:linear-gradient(145deg,#e6b4c1,#c87591);opacity:.34}
+.leaf-drift span:nth-child(3n){width:8px;height:12px;opacity:.28}
+@keyframes leaf-float{0%{transform:translate3d(0,-8vh,0) rotate(0deg)}25%{transform:translate3d(28px,25vh,0) rotate(100deg)}50%{transform:translate3d(-18px,52vh,0) rotate(210deg)}75%{transform:translate3d(34px,78vh,0) rotate(300deg)}100%{transform:translate3d(-12px,112vh,0) rotate(420deg)}}
+@media(max-width:600px){.leaf-drift span{opacity:.25}.leaf-drift span:nth-child(2n){opacity:.2}}
+@media(prefers-reduced-motion:reduce){.leaf-drift{display:none}}
 </style>
 </head>
-<body>\n
+<body>
+<div class="leaf-drift" aria-hidden="true"><span style="--x:8%;--duration:19s;--delay:-7s"></span><span style="--x:22%;--duration:23s;--delay:-15s"></span><span style="--x:39%;--duration:21s;--delay:-4s"></span><span style="--x:56%;--duration:26s;--delay:-19s"></span><span style="--x:71%;--duration:20s;--delay:-11s"></span><span style="--x:86%;--duration:24s;--delay:-2s"></span><span style="--x:95%;--duration:22s;--delay:-16s"></span></div>\n
 <header class="top"><div class="wrap nav"><a class="brand" href="#">NEWS<span>ANIME</span></a><nav class="links"><a href="#explorar">Animes</a><a href="#trailers">Trailers</a><a href="#novidades">Novidades</a></nav></div></header>
 <main>
 <section class="wrap hero story-hero" id="inicio"><img class="hero-bg" id="heroImage" src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1600&q=85" alt="Arte ilustrativa do universo anime"><div class="hero-copy"><div class="eyebrow" id="storyEyebrow">BEM-VINDO AO NOSSO UNIVERSO</div><h1 id="storyTitle">NEWS <em>ANIME</em></h1><p id="storyText">Aqui você sabe sobre todos os animes, com informações de fontes confiáveis.</p><div class="hero-actions"><a class="btn" id="storyButton" href="#explorar">Explorar animes ↓</a></div></div><button class="story-arrow prev" id="storyPrev" aria-label="Imagem anterior">‹</button><button class="story-arrow next" id="storyNext" aria-label="Próxima imagem">›</button><div class="story-dots" id="storyDots"><button class="story-dot active" data-slide="0" aria-label="Imagem 1"></button><button class="story-dot" data-slide="1" aria-label="Imagem 2"></button><button class="story-dot" data-slide="2" aria-label="Imagem 3"></button></div><span class="story-count" id="storyCount">01 / 03</span></section>
