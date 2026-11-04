@@ -22,6 +22,15 @@
 
 .shelf-label{display:inline-flex;align-items:center;gap:7px;color:var(--cyan);font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:8px}.shelf .grid{grid-template-columns:repeat(6,minmax(0,1fr))}.shelf .anime{position:relative}.shelf .info h3{min-height:38px}.shelf .shelf-tag{display:inline-block;color:#fff;background:#ff4d91;padding:4px 7px;border-radius:6px;font-size:10px;font-weight:800;margin-bottom:8px}.shelf .status{grid-column:1/-1}@media(max-width:900px){.shelf .grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:560px){.shelf .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+/* Vitrines horizontais: deslize para o lado para descobrir mais animes */
+.shelf .grid{display:flex;flex-wrap:nowrap;gap:15px;overflow-x:auto;overflow-y:hidden;padding:2px 2px 16px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#65405f transparent;-webkit-overflow-scrolling:touch}
+.shelf .anime{flex:0 0 185px;min-width:0;scroll-snap-align:start}
+.shelf .status{flex:0 0 100%}
+.shelf .grid::-webkit-scrollbar{height:6px}
+.shelf .grid::-webkit-scrollbar-track{background:#151a29;border-radius:9px}
+.shelf .grid::-webkit-scrollbar-thumb{background:#65405f;border-radius:9px}
+@media(max-width:560px){.shelf .grid{gap:11px}.shelf .anime{flex-basis:145px}}
+
 </style>
 </head>
 <body>
