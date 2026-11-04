@@ -106,7 +106,7 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 <div class="news-grid" id="newsGrid"><div class="status">Carregando notícias...</div></div></section>
 
 
-<section class="wrap section shelf" id="em-alta"><div class="section-head"><div><div class="shelf-label">🇧🇷 O QUE O BRASIL ACOMPANHA</div><h2>Em alta no Brasil</h2><p>Animes mais acompanhados no Brasil nos últimos 30 dias, com destaques do ranking semanal da comunidade.</p></div></div><div class="grid" id="trendingGrid"><div class="status">Carregando os animes em alta...</div></div></section>
+<section class="wrap section shelf" id="em-alta"><div class="section-head"><div><div class="shelf-label">🇧🇷 O QUE O BRASIL ACOMPANHA</div><h2>Em alta no Brasil</h2><p>Animes mais acompanhados no Brasil nos últimos 30 dias, com destaques do ranking semanal da comunidade.</p></div></div><div class="grid" id="trendingGrid"><div class="status">Carregando os animes em alta...</div></div><p id="trendingUpdate" style="color:var(--muted);font-size:11px;margin:4px 2px 0"></p></section>
 <section class="wrap section shelf" id="episodios"><div class="section-head"><div><div class="shelf-label">🗓️ AGENDA DE LANÇAMENTOS</div><h2>Novos episódios</h2><p>Os próximos lançamentos da semana, com datas e horários de Brasília.</p></div></div><div class="grid" id="episodesGrid"><div class="status">Buscando os próximos episódios...</div></div></section>
 <section class="wrap section shelf" id="temporada-atual"><div class="section-head"><div><div class="shelf-label">✨ TEMPORADA ATUAL</div><h2>Novidades da temporada</h2><p>Novos animes e continuações que estão estreando ou sendo exibidos agora.</p></div></div><div class="grid" id="currentSeasonGrid"><div class="status">Buscando novidades da temporada...</div></div></section>
 <section class="wrap section shelf" id="proximas-estreias"><div class="section-head"><div><div class="shelf-label">📅 FIQUE DE OLHO</div><h2>Próximas estreias</h2><p>Animes anunciados para as próximas temporadas.</p></div></div><div class="grid" id="upcomingGrid"><div class="status">Buscando próximas estreias...</div></div></section>
@@ -146,7 +146,9 @@ async function fillBrazilTrending(){
    const tagText=weekly?"RANKING SEMANAL":"BRASIL · 30 DIAS";
    const metaText=weekly?"Votado pela comunidade":"Mais acompanhado";
    return '<a class="anime" href="'+esc(a.url||"https://cosmonautageek.com")+'" target="_blank" rel="noopener noreferrer"><div class="poster-wrap"><img class="poster" src="'+esc(a.imagem||"")+'" alt="Capa de '+esc(a.titulo||"anime")+'" loading="lazy"><span class="play">'+rankText+'</span></div><div class="info"><span class="shelf-tag">'+tagText+'</span><h3>'+esc(a.titulo||"Anime")+'</h3><div class="meta"><span>'+metaText+'</span><span class="score">'+(weekly?"★":"#"+(a.posicao||i+1))+'</span></div></div></a>';
-  }).join("")+'<div class="status" style="flex-basis:100%">Atividade dos últimos 30 dias, complementada por destaques da votação semanal quando necessário. Atualizado'+(updated?" em "+updated+" (Brasília)":"")+'. Fonte: <a href="https://cosmonautageek.com/api/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Cosmonauta Geek</a> · dados abertos, licença CC BY 4.0.</div>';
+  }).join("");
+  const note=document.getElementById("trendingUpdate");
+  if(note)note.textContent="Atividade dos últimos 30 dias, complementada por destaques da votação semanal. Atualizado"+(updated?" em "+updated+" (Brasília)":"")+". Fonte: Cosmonauta Geek · dados abertos, licença CC BY 4.0.";
  }catch(e){
   target.innerHTML='<div class="status">O ranking brasileiro não pôde ser atualizado agora. Tente novamente mais tarde.</div>';
  }
