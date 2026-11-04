@@ -99,9 +99,6 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 #recomendacoes #recommendationsGrid{padding-bottom:8px}
 
 
-/* Sinopses curtas nos cartões da vitrine Em alta no Brasil */
-#em-alta .anime-synopsis{color:var(--muted);font-size:11px;line-height:1.5;margin:9px 0 0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;min-height:66px}
-@media(max-width:560px){#em-alta .anime-synopsis{font-size:10px;line-height:1.45;-webkit-line-clamp:4;min-height:58px}}
 </style>
 </head>
 <body>
@@ -158,22 +155,8 @@ async function fillBrazilTrending(){
    const rankText=weekly?"Destaque semanal":"#"+(a.posicao||i+1)+" no Brasil";
    const tagText=weekly?"RANKING SEMANAL":"BRASIL · 30 DIAS";
    const metaText=weekly?"Votado pela comunidade":"Mais acompanhado";
-   return '<a class="anime" href="'+esc(a.url||"https://cosmonautageek.com")+'" target="_blank" rel="noopener noreferrer"><div class="poster-wrap"><img class="poster" src="'+esc(a.imagem||"")+'" alt="Capa de '+esc(a.titulo||"anime")+'" loading="lazy"><span class="play">'+rankText+'</span></div><div class="info"><span class="shelf-tag">'+tagText+'</span><h3>'+esc(a.titulo||"Anime")+'</h3><div class="meta"><span>'+metaText+'</span><span class="score">'+(weekly?"★":"#"+(a.posicao||i+1))+'</span></div><p class="anime-synopsis" data-anime-title="'+esc(a.titulo||"")+'">Carregando sinopse...</p></div></a>';
+   return '<a class="anime" href="'+esc(a.url||"https://cosmonautageek.com")+'" target="_blank" rel="noopener noreferrer"><div class="poster-wrap"><img class="poster" src="'+esc(a.imagem||"")+'" alt="Capa de '+esc(a.titulo||"anime")+'" loading="lazy"><span class="play">'+rankText+'</span></div><div class="info"><span class="shelf-tag">'+tagText+'</span><h3>'+esc(a.titulo||"Anime")+'</h3><div class="meta"><span>'+metaText+'</span><span class="score">'+(weekly?"★":"#"+(a.posicao||i+1))+'</span></div></div></a>';
   }).join("");
-  const normTitle=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]/g,"");
-  await Promise.all(selected.map(async a=>{
-   const title=a.titulo||"";
-   const slot=[...target.querySelectorAll(".anime-synopsis")].find(el=>el.dataset.animeTitle===title);
-   if(!slot)return;
-   try{
-    const result=await api("https://api.tenrai.org/v1/anime?q="+encodeURIComponent(title)+"&limit=8");
-    const list=result.data||[];
-    const key=normTitle(title);
-    const match=list.find(x=>normTitle(x.title)===key||normTitle(x.title_english)===key)||list[0];
-    const synopsis=String(match?.synopsis||"").replace(/\\s+/g," ").trim();
-    slot.textContent=synopsis||"Sinopse ainda não disponível.";
-   }catch(e){slot.textContent="Sinopse ainda não disponível.";}
-  }));
   const note=document.getElementById("trendingUpdate");
   if(note)note.textContent="Atividade dos últimos 30 dias, complementada por destaques da votação semanal. Atualizado"+(updated?" em "+updated+" (Brasília)":"")+". Fonte: Cosmonauta Geek · dados abertos, licença CC BY 4.0.";
  }catch(e){
