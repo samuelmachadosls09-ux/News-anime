@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#58b8f4"/><stop offset=".55" stop-color="#b5e3f5"/><stop offset="1" stop-color="#f8c6c2"/></linearGradient>
+ <linearGradient id="mount" x2="0" y2="1"><stop stop-color="#a78b83"/><stop offset="1" stop-color="#665f72"/></linearGradient>
+ <linearGradient id="roof" x2="0" y2="1"><stop stop-color="#a9473c"/><stop offset="1" stop-color="#542e3d"/></linearGradient>
+ <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#f5d9b8"/><stop offset="1" stop-color="#c58f78"/></linearGradient>
+ <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+</defs>
+<rect width="1600" height="1000" fill="url(#sky)"/>
+<circle cx="1280" cy="165" r="95" fill="#fff4d2" opacity=".65" filter="url(#soft)"/>
+<g fill="#fff" opacity=".6"><ellipse cx="280" cy="180" rx="150" ry="32"/><ellipse cx="370" cy="170" rx="90" ry="24"/><ellipse cx="1120" cy="270" rx="170" ry="30"/></g>
+<path d="M0 540 170 390 280 430 430 290 570 390 720 250 900 390 1050 270 1240 400 1390 290 1600 430V760H0Z" fill="url(#mount)"/>
+<path d="M0 550 180 440 300 470 455 340 590 445 735 300 910 445 1060 330 1240 455 1400 350 1600 470V760H0Z" fill="#817c8d" opacity=".7"/>
+<!-- faces carved into the mountain -->
+<g fill="#d1b3a1" opacity=".8" stroke="#756b79" stroke-width="8" stroke-linejoin="round">
+ <path d="M280 475q-18-100 65-145 90-38 145 28l35 112-55 30-20 65-92 0-18-58Z"/>
+ <path d="M520 425q-8-115 90-155 105-32 155 50l20 115-50 32-18 65-105 0-25-65Z"/>
+ <path d="M790 400q5-125 112-155 112-22 160 72l12 115-48 34-24 62-110 0-25-65Z"/>
+ <path d="M1070 435q0-110 90-145 95-25 145 55l20 110-48 32-20 62-100 0-25-62Z"/>
+</g>
+<g fill="#625c6b" opacity=".8"><path d="M350 430q35-30 80 0l-18 14h-45Z"/><path d="M610 390q40-32 85 0l-20 15h-45Z"/><path d="M880 370q42-28 88 0l-18 15h-50Z"/><path d="M1140 400q38-28 80 0l-18 14h-45Z"/></g>
+<!-- village rooftops and homes -->
+<g stroke="#69414b" stroke-width="7" stroke-linejoin="round">
+ <path d="M-40 720 180 570 410 720V1000H-40Z" fill="url(#wall)"/><path d="M-70 735 180 535 445 735 400 755 180 610 0 760Z" fill="url(#roof)"/>
+ <path d="M360 760 560 600 790 760V1000H360Z" fill="url(#wall)"/><path d="M320 770 560 565 825 770 780 790 560 640 370 795Z" fill="url(#roof)"/>
+ <path d="M760 730 950 575 1160 730V1000H760Z" fill="url(#wall)"/><path d="M720 745 950 540 1200 745 1150 765 950 615 775 770Z" fill="url(#roof)"/>
+ <path d="M1110 760 1320 590 1550 760V1000H1110Z" fill="url(#wall)"/><path d="M1070 775 1320 555 1590 775 1540 795 1320 635 1125 800Z" fill="url(#roof)"/>
+</g>
+<g fill="#6b4350" opacity=".9"><rect x="80" y="805" width="75" height="130" rx="5"/><rect x="485" y="815" width="72" height="125" rx="5"/><rect x="875" y="790" width="72" height="145" rx="5"/><rect x="1245" y="820" width="78" height="120" rx="5"/></g>
+<g fill="#ffe4a9" opacity=".9"><rect x="205" y="790" width="115" height="95" rx="5"/><rect x="600" y="800" width="120" height="90" rx="5"/><rect x="1000" y="785" width="110" height="95" rx="5"/><rect x="1380" y="805" width="100" height="90" rx="5"/></g>
+<!-- small village tower -->
+<g transform="translate(1280 470)"><path d="M-85 90 0 0 85 90Z" fill="#9f4d4b" stroke="#663c4b" stroke-width="8"/><rect x="-62" y="90" width="124" height="130" rx="8" fill="#f1d1ad" stroke="#663c4b" stroke-width="8"/><path d="M-95 92H95" stroke="#663c4b" stroke-width="14"/><circle cx="0" cy="145" r="35" fill="#b95a4e"/><path d="M-17 145q17-24 34 0-17 24-34 0" fill="none" stroke="#f5d9b8" stroke-width="7"/></g>
+<!-- lantern and wooden house in the corner -->
+<g transform="translate(115 520)"><path d="M0 0V300" stroke="#513544" stroke-width="14"/><rect x="-48" y="35" width="96" height="125" rx="18" fill="#ffe6a8" stroke="#74414a" stroke-width="8"/><path d="M-32 35q32-28 64 0M-32 160q32 28 64 0" fill="none" stroke="#74414a" stroke-width="8"/><path d="M-22 100q22-28 44 0-22 28-44 0" fill="none" stroke="#a94748" stroke-width="8"/></g>
+<!-- blossom branches -->
+<g fill="#f5a9c8" opacity=".95"><circle cx="40" cy="100" r="36"/><circle cx="95" cy="140" r="28"/><circle cx="155" cy="75" r="32"/><circle cx="220" cy="130" r="35"/><circle cx="1480" cy="90" r="35"/><circle cx="1530" cy="150" r="28"/></g>
+<g fill="#ffd9e7"><circle cx="42" cy="92" r="9"/><circle cx="98" cy="132" r="8"/><circle cx="155" cy="68" r="9"/><circle cx="220" cy="122" r="8"/><circle cx="1480" cy="82" r="9"/></g>
+<path d="M0 0Q180 30 300 0M1450 0Q1520 35 1600 0" fill="none" stroke="#5c6e49" stroke-width="12"/>
+<rect width="1600" height="1000" fill="#18233a" opacity=".08"/>
+</svg>
