@@ -64,6 +64,18 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 @keyframes leaf-float{0%{transform:translate3d(0,-8vh,0) rotate(0deg)}25%{transform:translate3d(28px,25vh,0) rotate(100deg)}50%{transform:translate3d(-18px,52vh,0) rotate(210deg)}75%{transform:translate3d(34px,78vh,0) rotate(300deg)}100%{transform:translate3d(-12px,112vh,0) rotate(420deg)}}
 @media(max-width:600px){.leaf-drift span{opacity:.25}.leaf-drift span:nth-child(2n){opacity:.2}}
 @media(prefers-reduced-motion:reduce){.leaf-drift{display:none}}
+
+/* Feed de notícias mais compacto, com cenário anime ao fundo */
+#novidades{position:relative;isolation:isolate;padding:30px 24px 24px;margin-top:22px;border:1px solid #ffffff24;border-radius:22px;overflow:hidden;background:linear-gradient(90deg,rgba(5,10,20,.91),rgba(5,10,20,.76)),url('https://blog.copainter.ai/content/images/2026/03/copainter_historical-drama_12.png') center 48%/cover no-repeat}
+#novidades .section-head{margin-bottom:15px}
+#novidades .news-grid{gap:12px}
+#novidades .news{background:rgba(13,19,33,.88);backdrop-filter:blur(5px)}
+#novidades .news img{height:125px}
+#novidades .news-body{padding:13px}
+#novidades .news h3{font-size:17px;margin:7px 0}
+#novidades .news p{font-size:13px;line-height:1.48;margin:7px 0}
+#novidades .news .news-source{font-size:12px}
+@media(max-width:560px){#novidades{padding:22px 13px 17px;margin-top:16px}#novidades .news-grid{gap:10px}#novidades .news img{height:115px}#novidades .news-body{padding:11px}}
 </style>
 </head>
 <body>
