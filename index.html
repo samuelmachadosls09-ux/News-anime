@@ -185,7 +185,7 @@ async function fillBrazilTrending(){
  const target=document.getElementById("trendingGrid");
  try{
   const activity=await api("https://cosmonautageek.com/api/v1/?r=assistindo");
-  const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]/g,"");
+  const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
   const items=[],seen=new Set();
   for(const item of (activity.itens||[])){
    if(item.tipo!=="anime")continue;
@@ -224,10 +224,10 @@ async function fillEpisodes(){
  const target=document.getElementById("episodesGrid");
  try{
   const result=await api("https://cosmonautageek.com/api/v1/?r=episodios");
-  const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]/g,"");
+  const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
   const seen=new Set(),now=Date.now();
   const items=(result.itens||[]).filter(ep=>ep&&ep.data&&ep.titulo).filter(ep=>{
-   const time=/^\\d{2}:\\d{2}$/.test(String(ep.hora||""))?ep.hora:"23:59";
+   const time=/^\d{2}:\d{2}$/.test(String(ep.hora||""))?ep.hora:"23:59";
    const timestamp=Date.parse(ep.data+"T"+time+":00-03:00");
    if(Number.isFinite(timestamp)&&timestamp<now)return false;
    const key=norm(ep.titulo)+"|"+ep.data+"|"+(ep.episodio||"estreia");
@@ -256,7 +256,7 @@ async function fillRecommendations(){
  const target=document.getElementById('recommendationsGrid');
  target.innerHTML='<div class="status">Escolhendo 20 animes para você descobrir...</div>';
  const found=[];
- const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+ const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
  for(const title of curatedRecommendations){
   try{
    const result=await api('https://api.tenrai.org/v1/anime?q='+encodeURIComponent(title)+'&limit=8');
