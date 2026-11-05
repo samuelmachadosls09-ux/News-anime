@@ -98,9 +98,9 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 #recomendacoes + #trailers{padding-top:12px}
 #recomendacoes #recommendationsGrid{padding-bottom:8px}
 
-/* Impede que os cartões das duas vitrines fiquem esticados pela altura de outro item */
-#em-alta #trendingGrid,#recomendacoes #recommendationsGrid{align-items:flex-start}
-#em-alta #trendingGrid .anime,#recomendacoes #recommendationsGrid .anime{align-self:flex-start;height:auto}
+/* Mantém os cartões das vitrines na altura exata do próprio conteúdo */
+#em-alta #trendingGrid,#recomendacoes #recommendationsGrid{align-items:flex-start!important}
+#em-alta #trendingGrid>.anime,#recomendacoes #recommendationsGrid>.anime{align-self:flex-start!important;height:fit-content!important;min-height:0!important;flex-grow:0!important}
 
 
 </style>
