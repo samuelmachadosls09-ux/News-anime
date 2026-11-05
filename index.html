@@ -98,6 +98,10 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 #recomendacoes + #trailers{padding-top:12px}
 #recomendacoes #recommendationsGrid{padding-bottom:8px}
 
+/* Impede que os cartões das duas vitrines fiquem esticados pela altura de outro item */
+#em-alta #trendingGrid,#recomendacoes #recommendationsGrid{align-items:flex-start}
+#em-alta #trendingGrid .anime,#recomendacoes #recommendationsGrid .anime{align-self:flex-start;height:auto}
+
 
 </style>
 </head>
