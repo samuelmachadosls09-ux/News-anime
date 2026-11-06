@@ -214,26 +214,27 @@ async function fillShelf(elementId,url,tag){
  const target=document.getElementById(elementId);
  try{
   const result=await api(url);
-  const seen=new Set();
+  const seenIds=new Set(),seenTitles=new Set();
+  const normTitle=value=>String(value||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]/g,"");
   const items=(result.data||[]).filter(a=>{
-   if(!a||!a.mal_id||!a.title||seen.has(String(a.mal_id)))return false;
-   seen.add(String(a.mal_id));
+   const id=String(a?.mal_id||"");
+   const key=normTitle(a?.title_english||a?.title||"");
+   if(!a||!id||!a.title||!key||seenIds.has(id)||seenTitles.has(key))return false;
+   seenIds.add(id);
+   seenTitles.add(key);
    return true;
   }).slice(0,20);
   if(!items.length){target.innerHTML='<div class="status">Nenhum título disponível neste momento.</div>';return;}
   target.innerHTML=items.map(a=>{
    const image=a.images?.jpg?.large_image_url||a.images?.jpg?.image_url||'';
    return '<article class="anime" data-shelf-id="'+a.mal_id+'"><div class="poster-wrap"><img class="poster" src="'+esc(image)+'" alt="Capa de '+esc(a.title)+'" loading="lazy"><span class="play">▶ Ver detalhes</span></div><div class="info"><span class="shelf-tag">'+esc(tag)+'</span><h3>'+esc(a.title)+'</h3><div class="meta"><span>'+(a.year||a.aired?.prop?.from?.year||'Anime')+'</span><span class="score">★ '+(a.score||'—')+'</span></div></div></article>';
-  }).join('');
-  target.querySelectorAll('.anime').forEach(card=>card.addEventListener('click',()=>details(Number(card.dataset.shelfId))));
- }catch(error){target.innerHTML='<div class="status">Não foi possível atualizar esta vitrine agora. Tente novamente mais tarde.</div>';}
-}
-async function fillBrazilTrending(){
+  }).joiasync function fillBrazilTrending(){
  const target=document.getElementById("trendingGrid");
  try{
   const activity=await api("https://cosmonautageek.com/api/v1/?r=assistindo");
-  const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
+  const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]/g,"");
   const items=[],seen=new Set();
+  let weeklyDescription="";
   for(const item of (activity.itens||[])){
    if(item.tipo!=="anime")continue;
    const key=norm(item.titulo);
@@ -243,6 +244,7 @@ async function fillBrazilTrending(){
   }
   try{
    const weekly=await api("https://cosmonautageek.com/api/v1/?r=ranking");
+   weeklyDescription=weekly.descricao||"";
    for(const item of (weekly.itens||[])){
     const key=norm(item.titulo);
     if(!key||seen.has(key))continue;
@@ -256,13 +258,15 @@ async function fillBrazilTrending(){
   const updated=activity.atualizado_em?new Date(activity.atualizado_em).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}):"";
   target.innerHTML=selected.map((a,i)=>{
    const weekly=a.origem==="weekly";
-   const rankText=weekly?"Destaque semanal":"#"+(a.posicao||i+1)+" no Brasil";
+   const position=a.posicao?String(a.posicao):"";
+   const rankText=weekly?(position?"#"+position+" no ranking semanal":"Destaque semanal"):(position?"#"+position+" no Brasil":"Em alta no Brasil");
    const tagText=weekly?"RANKING SEMANAL":"BRASIL · 30 DIAS";
-   const metaText=weekly?"Votado pela comunidade":"Mais acompanhado";
-   return '<a class="anime" href="'+esc(a.url||"https://cosmonautageek.com")+'" target="_blank" rel="noopener noreferrer"><div class="poster-wrap"><img class="poster" src="'+esc(a.imagem||"")+'" alt="Capa de '+esc(a.titulo||"anime")+'" loading="lazy"><span class="play">'+rankText+'</span></div><div class="info"><span class="shelf-tag">'+tagText+'</span><h3>'+esc(a.titulo||"Anime")+'</h3><div class="meta"><span>'+metaText+'</span><span class="score">'+(weekly?"★":"#"+(a.posicao||i+1))+'</span></div></div></a>';
+   const metaText=weekly?(a.votos!=null?a.votos+" votos na comunidade":"Votação da comunidade"):"Mais acompanhado";
+   const score=position?"#"+position:"—";
+   return '<a class="anime" href="'+esc(a.url||"https://cosmonautageek.com")+'" target="_blank" rel="noopener noreferrer"><div class="poster-wrap"><img class="poster" src="'+esc(a.imagem||"")+'" alt="Capa de '+esc(a.titulo||"anime")+'" loading="lazy"><span class="play">'+rankText+'</span></div><div class="info"><span class="shelf-tag">'+tagText+'</span><h3>'+esc(a.titulo||"Anime")+'</h3><div class="meta"><span>'+metaText+'</span><span class="score">'+score+'</span></div></div></a>';
   }).join("");
   const note=document.getElementById("trendingUpdate");
-  if(note)note.textContent="Atividade dos últimos 30 dias, complementada por destaques da votação semanal. Atualizado"+(updated?" em "+updated+" (Brasília)":"")+". Fonte: Cosmonauta Geek · dados abertos, licença CC BY 4.0.";
+  if(note)note.textContent="Atividade dos últimos 30 dias, complementada pela votação semanal da comunidade"+(weeklyDescription?" ("+weeklyDescription+")":"")+". Atualizado"+(updated?" em "+updated+" (Brasília)":"")+". Fonte: Cosmonauta Geek · dados abertos, licença CC BY 4.0.";
  }catch(e){
   target.innerHTML='<div class="status">O ranking brasileiro não pôde ser atualizado agora. Tente novamente mais tarde.</div>';
  }
@@ -298,18 +302,18 @@ async function fillEpisodes(){
   target.innerHTML='<div class="status">Não foi possível carregar a agenda de episódios agora. Tente novamente mais tarde.</div>';
  }
 }
-const curatedRecommendations=['A Place Further Than the Universe','Barakamon','Odd Taxi','Planetes','The Tatami Galaxy','Keep Your Hands Off Eizouken!','Run with the Wind','Silver Spoon','Mushishi','Natsume\'s Book of Friends','Shouwa Genroku Rakugo Shinjuu','Baccano!','Ping Pong the Animation','The Eccentric Family','Girls\' Last Tour','Astra Lost in Space','Erased','Dororo','Vivy: Fluorite Eye\'s Song','The Great Passage'];
+const curatedRecommendations=["Black Clover 2nd Season","Kusuriya no Hitorigoto 3rd Season","Sousou no Frieren","Ore dake Level Up na Ken","One Piece","A Place Further Than the Universe","Barakamon","Odd Taxi","Planetes","The Tatami Galaxy","Keep Your Hands Off Eizouken!","Run with the Wind","Silver Spoon","Mushishi","Natsume's Book of Friends","Shouwa Genroku Rakugo Shinjuu","Baccano!","Ping Pong the Animation","The Eccentric Family","Girls' Last Tour"];
 async function fillRecommendations(){
  const target=document.getElementById('recommendationsGrid');
  target.innerHTML='<div class="status">Escolhendo 20 animes para você descobrir...</div>';
- const found=[];
+ const found=[],seenIds=new Set(),seenTitles=new Set();
  const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
  for(const title of curatedRecommendations){
   try{
    const result=await api('https://api.tenrai.org/v1/anime?q='+encodeURIComponent(title)+'&limit=8');
    const list=result.data||[];
    const item=list.find(a=>[a.title,a.title_english,a.title_japanese,...(a.title_synonyms||[])].some(value=>norm(value)===norm(title)));
-   if(item&&!found.some(x=>x.mal_id===item.mal_id))found.push(item);
+   if(item){const key=norm(item.title_english||item.title||title);const id=String(item.mal_id||\"\");if(id&&key&&!seenIds.has(id)&&!seenTitles.has(key)){found.push(item);seenIds.add(id);seenTitles.add(key);}}
   }catch(e){}
   await wait(120);
  }
@@ -342,121 +346,121 @@ document.getElementById('closeModal').onclick=()=>document.getElementById('modal
 /* Notícias atuais: nove matérias verificadas, com leitura dentro do News Anime */
 const newsItems=[
  {
-  "kicker": "NOVA DATA · 05 NOV 2026",
-  "date": "05/11/2026",
-  "sourceName": "Anime Corner / site oficial",
-  "title": "The Dangers in My Heart confirma a 3ª temporada para abril de 2027",
-  "summary": "A terceira temporada ganhou novo teaser e visual, com estreia marcada para abril de 2027. O Studio Shin-Ei Animation retorna à produção; o dia exato ainda não foi divulgado.",
+  "kicker": "RANKING CRUNCHYROLL · 06 NOV 2026",
+  "date": "06/11/2026",
+  "sourceName": "OtakuPT / conta oficial de Black Clover",
+  "title": "Black Clover 2 foi o anime mais assistido da Crunchyroll em outubro",
+  "summary": "A conta oficial da série informou que a segunda temporada liderou as visualizações da Crunchyroll em outubro. A publicação não divulgou números absolutos de audiência.",
   "details": [
-   "O material promocional mostra Kyotaro Ichikawa e Anna Yamada em uma nova fase do relacionamento, depois de se tornarem um casal no fim da segunda temporada.",
-   "O site oficial confirmou o mês de estreia no Japão. A programação internacional ainda não foi anunciada."
+   "O resultado marca o retorno de Black Clover ao topo da plataforma após mais de cinco anos sem novos episódios.",
+   "Segundo a reportagem, o primeiro episódio da nova temporada ultrapassou 130 mil curtidas em menos de uma semana. Curtidas não representam o total de visualizações."
   ],
-  "image": "https://bokuyaba-anime.com/assets/img/top/modal/bn_bkyb3rd-a_pc.jpg",
-  "source": "https://animecorner.me/the-dangers-in-my-heart-bokuyaba-season-3-new-visual-and-trailer-revealed-april-2027-release/"
+  "image": "https://i0.wp.com/www.otakupt.com/wp-content/uploads/2026/09/Black-Clover-2-anime-visual-2-1-scaled.jpg?resize=696%2C984&ssl=1",
+  "source": "https://www.otakupt.com/anime/black-clover-segunda-temporada-anime-mais-visto-crunchyroll/"
  },
  {
-  "kicker": "VISUAL E ELENCO · 05 NOV 2026",
-  "date": "05/11/2026",
-  "sourceName": "Anime Corner / site oficial",
-  "title": "Code Geass: Star Chaser Aspal revela visual e elenco principal",
-  "summary": "A nova produção da franquia divulgou o visual principal e confirmou Ivan Shibata como Aspal e Hibiku Yamamura como Zoé. O projeto segue previsto para 2027.",
+  "kicker": "PILOTO LIBERADO · 06 NOV 2026",
+  "date": "06/11/2026",
+  "sourceName": "BLUE RIGHTS / PR TIMES",
+  "title": "Ninja Skooler publica episódio piloto e lança música original",
+  "summary": "A BLUE RIGHTS disponibilizou o piloto do projeto original Ninja Skooler, desenvolvido com equipes de breccia e Kinema Citrus. A música da produção, “Knots”, também chegou às plataformas digitais.",
   "details": [
-   "Kazuya Nomura dirige, Mado Nozaki cuida da composição da série e Rolua assina o design dos personagens. A animação é produzida pela Sunrise.",
-   "A história se passa no Império Romano do ano 606. O site oficial também anunciou sessões antecipadas em cidades japonesas a partir de janeiro de 2027; ainda não há uma data geral exata."
+   "A história acompanha Rappa, um órfão que sonha em se tornar ninja e acaba acolhido por Okachimachi e seu mestre.",
+   "Shunsuke Takarai dirige o projeto. Crédito da imagem: © NINJA SKOOLER."
   ],
-  "image": "https://img.toy-people.com/member/179039734042.png",
-  "source": "https://animecorner.me/code-geass-star-chaser-aspal-anime-reveals-main-visual-and-voice-cast/"
+  "image": "https://prcdn.freetls.fastly.net/release_image/141283/11/141283-11-d94cd097949935fce97b20febe526949-1920x1080.png?width=536&quality=85%2C75&format=jpeg&auto=webp&fit=bounds&bg-color=fff",
+  "source": "https://animeanime.jp/release/prtimes/20261106/325254.html"
  },
  {
-  "kicker": "ANIME ANUNCIADO · 05 NOV 2026",
-  "date": "05/11/2026",
-  "sourceName": "Twin Engine / site oficial",
-  "title": "Spirit Circle ganha anime para dezembro de 2026",
-  "summary": "A Twin Engine confirmou a adaptação do mangá de Satoshi Mizukami para dezembro de 2026. O anúncio trouxe visual, primeiro trailer, elenco principal e a confirmação de 18 episódios.",
+  "kicker": "FILME ANUNCIADO · 06 NOV 2026",
+  "date": "06/11/2026",
+  "sourceName": "Site oficial de Paradox Live",
+  "title": "Paradox Live THE MOVIE ganha visual e estreia confirmada para 2027",
+  "summary": "O projeto Paradox Live revelou o primeiro visual promocional de seu filme. A produção confirmou a chegada aos cinemas em 2027, mas ainda não anunciou o dia exato.",
   "details": [
-   "Kazuki Ura interpreta Fuuta, Anna Nagase dá voz a Kouko, Eri Yukimura interpreta Rune e Yuichi Nakamura é East. A animação é produzida por NAGOMI e EOTA.",
-   "Tatsuo Sato, falecido em abril de 2026, é creditado como diretor e responsável pela composição da série. A produção foi concluída sob a liderança do assistente de direção Kentaro Mizuno."
+   "O anúncio oficial apresenta os líderes das equipes reunidos para o filme de performances ao vivo.",
+   "A cobertura japonesa informa a participação de nove equipes e 29 personagens. Novos detalhes serão divulgados posteriormente."
   ],
-  "image": "https://prcdn.freetls.fastly.net/release_image/32680/155/32680-155-9dca0b63883234d404e2cf038db110fb-1914x2700.jpg?auto=webp&bg-color=fff&fit=bounds&format=jpeg&height=1350&quality=85%2C65&width=1950",
-  "source": "https://www.spiritcircle.jp/"
+  "image": "https://m.imageimg.net/upload/artist_img/PDXLV/a28d9361742449bd33b4a56b99a3b1e79dd88cf1_6aed6cd90b0be.png",
+  "source": "https://paradoxlive.jp/news/detail.php?id=1137143"
  },
  {
-  "kicker": "LIVE-ACTION · 05 NOV 2026",
-  "date": "05/11/2026",
-  "sourceName": "OtakuPT",
-  "title": "Mackenyu é confirmado como Mash no filme live-action de Mashle",
-  "summary": "Mackenyu, conhecido por interpretar Zoro em One Piece da Netflix, foi confirmado como Mash Burnedead. O filme ganhou teaser e novo visual e estreia nos cinemas japoneses em 19 de março de 2027.",
+  "kicker": "TRAILER E VISUAL · 06 NOV 2026",
+  "date": "06/11/2026",
+  "sourceName": "Site oficial de Rainy Day Serenade",
+  "title": "Rainy Day Serenade revela primeiro trailer e confirma estreia em abril de 2027",
+  "summary": "A adaptação do mangá de Haruka Kawachi apresentou seu primeiro vídeo e visual principal. A série está prevista para abril de 2027, com animação da Tezuka Productions.",
   "details": [
-   "Yuichi Fukuda dirige o longa. Mackenyu é, por enquanto, o único integrante do elenco confirmado oficialmente.",
-   "A produção é da CREDEUS, com supervisão da Warner Bros. Pictures e da Fuji TV e distribuição japonesa da TOHO. Ainda não há data internacional anunciada."
+   "Yume Miyamoto interpreta Hina Katagiri e Takeo Otsuka dá voz a Takaaki Hongo.",
+   "A trama mistura romance e viagem no tempo: Hina acaba no Japão de 1907 e conhece um rapaz que a confunde com sua noiva."
   ],
-  "image": "https://i0.wp.com/www.otakupt.com/wp-content/uploads/2026/11/Mackenyu-no-filme-live-action-de-Mashle-.jpg?resize=696%2C392&ssl=1",
-  "source": "https://www.otakupt.com/cinema/mackenyu-mash-filme-live-action-mashle-teaser-musculos/"
+  "image": "https://namidaame-anime.com/wordpress/wp-content/uploads/182c0dbe5a886b3e4cc5b10d621ae3e2.jpg",
+  "source": "https://namidaame-anime.com/"
  },
  {
-  "kicker": "EM AVALIAÇÃO · 04 NOV 2026",
-  "date": "04/11/2026",
-  "sourceName": "OtakuPT",
-  "title": "Kodansha reavalia o futuro do anime Mii-chan and Miss Yamada",
-  "summary": "A editora informou que discute com o comitê de produção se a adaptação anunciada para 2027 deve avançar, após críticas e uma petição de organizações japonesas. Não existe cancelamento definitivo anunciado.",
+  "kicker": "TEMPORADA CONFIRMADA · 06 NOV 2026",
+  "date": "06/11/2026",
+  "sourceName": "Site oficial de Yuru Camp",
+  "title": "Yuru Camp Season 4 ganha visual principal e estreia em abril de 2027",
+  "summary": "A quarta temporada de Laid-Back Camp apresentou um novo visual e trailer. A estreia está prevista para abril de 2027, com Ema e Mei entre as personagens em destaque.",
   "details": [
-   "A Kodansha pretende ouvir entidades ligadas à proteção de pessoas vulneráveis e à saúde mental antes de tomar uma decisão.",
-   "Por enquanto, a situação oficial é de avaliação do projeto. A editora ainda não confirmou se a série será mantida, alterada ou interrompida."
+   "Shin Tosaka retorna à direção e FuRyu Pictures assume a animação da nova temporada.",
+   "O material oficial também apresenta as músicas-tema, mas ainda não informa um dia específico de estreia."
   ],
-  "image": "https://i0.wp.com/www.otakupt.com/wp-content/uploads/2026/11/Mii-chan-and-Miss-Yamada-teaser-screenshot-anime.jpg?resize=696%2C392&ssl=1",
-  "source": "https://www.otakupt.com/anime/polemica-japao-kodansha-questiona-futuro-anime-mii-chan-miss-yamada/"
+  "image": "https://i0.wp.com/www.otakupt.com/wp-content/uploads/2026/11/Laid-Back-Camp-4-visual-2-scaled.jpg?resize=696%2C984&ssl=1",
+  "source": "https://yurucamp.jp/news/information/9896"
  },
  {
-  "kicker": "TRAILER E MÚSICAS · 04 NOV 2026",
-  "date": "04/11/2026",
-  "sourceName": "OtakuPT",
-  "title": "Dan-Katsu divulga trailer, elenco adicional e músicas-tema",
-  "summary": "A adaptação de Reincarnation in the Game World Dan-Katsu apresentou um novo teaser com a abertura “Play the Play”, de MindaRyn, e o encerramento “My Life Story”, de LINKL PLANET. A estreia está prevista para janeiro de 2027.",
+  "kicker": "NOVO TRAILER E ABERTURA · 06 NOV 2026",
+  "date": "06/11/2026",
+  "sourceName": "Site oficial de Wound & Bandage",
+  "title": "Wound & Bandage revela trailer completo e abertura de MIYAVI",
+  "summary": "O anime divulgou seu visual principal, um novo trailer e integrantes adicionais do elenco. A música de abertura será “Show Me All Your Pain”, interpretada por MIYAVI.",
   "details": [
-   "Ayaka Nanase, Kotone Izumi, Hikaru Iida e Chihaya Asakura foram anunciadas no elenco adicional.",
-   "A animação é do STUDIO MASSKET, com direção de Nagisa Miyazaki. A data exata de estreia ainda não foi divulgada."
+   "A animação é da J.C.STAFF. O anúncio oficial também confirmou novas vozes para personagens coadjuvantes e para a narração.",
+   "O site oficial anunciou um programa especial no ABEMA para 9 de janeiro de 2027, às 20h no Japão; essa é a data do especial, não uma confirmação do horário de estreia da série."
   ],
-  "image": "https://i0.wp.com/www.otakupt.com/wp-content/uploads/2026/08/Reincarnation-in-the-Game-World-Dan-Katsu-anime-visual-jan-2027-1-scaled.jpg?resize=696%2C984&ssl=1",
-  "source": "https://www.otakupt.com/anime/trailer-anime-reincarnation-in-the-game-world-dan-katsu-tema-abertura-encerramento/"
+  "image": "https://i0.wp.com/www.otakupt.com/wp-content/uploads/2026/11/Wound-Bandage-anime-visual-2-scaled.jpg?resize=696%2C941&ssl=1",
+  "source": "https://houtaidoumei.com/news/37/"
  },
  {
-  "kicker": "VISUAL E ELENCO · 04 NOV 2026",
-  "date": "04/11/2026",
-  "sourceName": "Anime Corner",
-  "title": "Promise Me the Spotlight revela visual, elenco e abertura",
-  "summary": "A adaptação do mangá de Jun Wakatsuki ganhou teaser, visual promocional e anúncio de elenco. Yuika será responsável pela música de abertura, “Nanimono demo nakatta Watashi dakara”.",
+  "kicker": "NOVA PREMIAÇÃO · 03 NOV 2026",
+  "date": "03/11/2026",
+  "sourceName": "Associação Japonesa de Animação / PR TIMES",
+  "title": "Japão anuncia o Nippon Anime Awards para novembro de 2027",
+  "summary": "A Associação Japonesa de Animação anunciou uma nova cerimônia dedicada a reconhecer os profissionais que criam animes. A primeira edição está marcada para 21 de novembro de 2027, em Tóquio.",
   "details": [
-   "O elenco anunciado inclui Taihi Kimura, Haruna Mikawa, Mai Kanno e Yukari Anzai.",
-   "Seiji Kishi dirige a série, Yuko Kakihara cuida da composição e o estúdio Team TillDawn produz a animação."
+   "O evento será organizado pela AJA em conjunto com o Governo Metropolitano de Tóquio e terá iniciativas ligadas a negócios e formação de novos talentos.",
+   "As categorias, os indicados e o processo de seleção ainda não foram divulgados."
   ],
-  "image": "https://i0.wp.com/www.otakupt.com/wp-content/uploads/2026/11/Promise-Me-the-Spotlight-anime-1st-visual-scaled.jpg?resize=696%2C984&ssl=1",
-  "source": "https://animecorner.me/promise-me-the-spotlight-anime-reveals-visual-trailer-cast-opening-theme-song/"
+  "image": "https://prcdn.freetls.fastly.net/release_image/191578/9/191578-9-7347baacb579778833b6c72ca4732546-3000x2000.jpg?auto=webp&bg-color=fff&fit=bounds&format=jpeg&height=1350&quality=85%2C65&width=1950",
+  "source": "https://prtimes.jp/main/html/rd/p/000000009.000191578.html"
  },
  {
-  "kicker": "ADAPTAÇÃO ANUNCIADA · 04 NOV 2026",
-  "date": "04/11/2026",
-  "sourceName": "Anime Corner / site oficial",
-  "title": "Otaku Vampire’s Love Bite vai ganhar adaptação em anime",
-  "summary": "O mangá de Julietta Suzuki, autora de Kamisama Kiss, foi anunciado como anime e recebeu um visual teaser e um trailer especial. Estúdio, equipe e elenco ainda não foram divulgados.",
+  "kicker": "ESTREIA MUNDIAL · 06 NOV 2026",
+  "date": "06/11/2026",
+  "sourceName": "Site oficial de Devils’ Crest",
+  "title": "Devils’ Crest estreia no Prime Video com os dois primeiros episódios",
+  "summary": "O anime baseado na obra de Reki Kawahara, criador de Sword Art Online, iniciou sua distribuição mundial exclusiva no Prime Video. Os episódios 1 e 2 foram liberados na estreia.",
   "details": [
-   "A história acompanha Hina, uma vampira apaixonada pela cultura otaku, que tenta fazer amizade com o vizinho Kyuta.",
-   "O mangá é publicado na revista Hana to Yume. A produção ainda não revelou janela de estreia."
+   "O site oficial anunciou o lançamento às 21h no Japão, equivalente a 9h de Brasília pela diferença de fuso.",
+   "A produção é da Production I.G e a abertura, “Shinka”, é interpretada por Ado."
   ],
-  "image": "https://de7i3bh7bgh0d.cloudfront.net/2025/09/19/17/13/03/6e9fff31-7e7a-4919-88a6-4d6e2c8fd06d/OtakuVampireLB05_blogsplash_1200x630.jpg",
-  "source": "https://animecorner.me/otaku-vampires-love-bite-anime-adaptation-announced/"
+  "image": "https://demonscrest-anime.com/core_sys/images/main/home/kv01.jpg",
+  "source": "https://demonscrest-anime.com/news/index00140000.html"
  },
  {
-  "kicker": "NOVO VISUAL · 04 NOV 2026",
-  "date": "04/11/2026",
-  "sourceName": "OtakuPT",
-  "title": "Red Cat Ramen 2 ganha novo visual e confirma estreia em janeiro de 2027",
-  "summary": "O site oficial divulgou uma nova imagem promocional da segunda temporada, que estreia em janeiro de 2027. A produção continua a cargo do estúdio E&H Production.",
+  "kicker": "ESTREIA NOS CINEMAS · 06 NOV 2026",
+  "date": "06/11/2026",
+  "sourceName": "CloverWorks / Aniplex",
+  "title": "GROTESQQQUE chega aos cinemas japoneses com três histórias originais",
+  "summary": "O novo filme antológico dirigido por Atsushi Nishigori estreia no Japão em 6 de novembro. A produção reúne três segmentos: A(E)LIENS, YOROSHIKU★Girl e NOCTURNE: NUIT GROTESQUE.",
   "details": [
-   "Kenjiro Tsuda retorna como Bunzo, ao lado do elenco que dá voz aos gatos do restaurante.",
-   "A história acompanha Tamako, que consegue um emprego em uma casa de ramen administrada por gatos e acaba responsável pelos cuidados dos felinos."
+   "O longa é uma produção original do CloverWorks, com distribuição da Aniplex e da JOEN.",
+   "A data confirmada nas fontes oficiais é a estreia japonesa. Não foi localizada uma data de lançamento no Brasil."
   ],
-  "image": "https://i0.wp.com/www.otakupt.com/wp-content/uploads/2026/11/Red-Cat-Ramen-2-anime-visual-1-scaled.jpg?resize=696%2C984&ssl=1",
-  "source": "https://www.otakupt.com/anime/imagem-promocional-de-red-cat-ramen-2/"
+  "image": "https://en.cloverworks.co.jp/wp/wp-content/uploads/2026/07/grotesqqque_kv.jpg",
+  "source": "https://www.aniplex.co.jp/lineup/movie-gtq123/"
  }
 ];
 function openNews(index){
