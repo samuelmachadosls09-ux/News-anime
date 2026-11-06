@@ -313,7 +313,7 @@ async function fillRecommendations(){
    const result=await api('https://api.tenrai.org/v1/anime?q='+encodeURIComponent(title)+'&limit=8');
    const list=result.data||[];
    const item=list.find(a=>[a.title,a.title_english,a.title_japanese,...(a.title_synonyms||[])].some(value=>norm(value)===norm(title)));
-   if(item){const key=norm(item.title_english||item.title||title);const id=String(item.mal_id||\"\");if(id&&key&&!seenIds.has(id)&&!seenTitles.has(key)){found.push(item);seenIds.add(id);seenTitles.add(key);}}
+   if(item){const key=norm(item.title_english||item.title||title);const id=String(item.mal_id||"");if(id&&key&&!seenIds.has(id)&&!seenTitles.has(key)){found.push(item);seenIds.add(id);seenTitles.add(key);}}
   }catch(e){}
   await wait(120);
  }
