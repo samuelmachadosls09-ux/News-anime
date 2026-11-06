@@ -215,7 +215,7 @@ async function fillShelf(elementId,url,tag){
  try{
   const result=await api(url);
   const seenIds=new Set(),seenTitles=new Set();
-  const normTitle=value=>String(value||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]/g,"");
+  const normTitle=value=>String(value||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
   const items=(result.data||[]).filter(a=>{
    const id=String(a?.mal_id||"");
    const key=normTitle(a?.title_english||a?.title||"");
@@ -228,11 +228,15 @@ async function fillShelf(elementId,url,tag){
   target.innerHTML=items.map(a=>{
    const image=a.images?.jpg?.large_image_url||a.images?.jpg?.image_url||'';
    return '<article class="anime" data-shelf-id="'+a.mal_id+'"><div class="poster-wrap"><img class="poster" src="'+esc(image)+'" alt="Capa de '+esc(a.title)+'" loading="lazy"><span class="play">▶ Ver detalhes</span></div><div class="info"><span class="shelf-tag">'+esc(tag)+'</span><h3>'+esc(a.title)+'</h3><div class="meta"><span>'+(a.year||a.aired?.prop?.from?.year||'Anime')+'</span><span class="score">★ '+(a.score||'—')+'</span></div></div></article>';
-  }).joiasync function fillBrazilTrending(){
+  }).join('');
+  target.querySelectorAll('.anime').forEach(card=>card.addEventListener('click',()=>details(Number(card.dataset.shelfId))));
+ }catch(error){target.innerHTML='<div class="status">Não foi possível atualizar esta vitrine agora. Tente novamente mais tarde.</div>';}
+}
+async function fillBrazilTrending(){
  const target=document.getElementById("trendingGrid");
  try{
   const activity=await api("https://cosmonautageek.com/api/v1/?r=assistindo");
-  const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]/g,"");
+  const norm=value=>String(value||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
   const items=[],seen=new Set();
   let weeklyDescription="";
   for(const item of (activity.itens||[])){
@@ -256,7 +260,7 @@ async function fillShelf(elementId,url,tag){
   const selected=items.slice(0,20);
   if(!selected.length)throw Error("Sem dados de atividade");
   const updated=activity.atualizado_em?new Date(activity.atualizado_em).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}):"";
-  target.innerHTML=selected.map((a,i)=>{
+  target.innerHTML=selected.map(a=>{
    const weekly=a.origem==="weekly";
    const position=a.posicao?String(a.posicao):"";
    const rankText=weekly?(position?"#"+position+" no ranking semanal":"Destaque semanal"):(position?"#"+position+" no Brasil":"Em alta no Brasil");
