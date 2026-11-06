@@ -124,6 +124,45 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 .support-card .goal-track{height:13px;background:#ffffff20;border-radius:20px;overflow:hidden}
 .support-card .goal-fill{height:100%;width:0;background:linear-gradient(90deg,var(--pink),#9b55f5);border-radius:20px}
 .support-card .support-note{font-size:12px;color:var(--muted)!important;margin-bottom:0}
+
+/* NOVA IDENTIDADE VISUAL — referência aprovada */
+:root{--bg:#080511;--panel:#100d1c;--panel2:#1a1230;--text:#faf7ff;--muted:#b7adc9;--pink:#d12cff;--cyan:#c65cff;--line:#352044}
+body{background:radial-gradient(ellipse at 50% 0%,#1b0c2d 0%,#080511 48%,#07040d 100%)}
+.top{background:rgba(8,5,17,.94);border-bottom:1px solid #b42cff35;box-shadow:0 8px 30px #0006}
+.brand{font-size:27px;letter-spacing:-1.2px}.brand span{color:#d52cff}
+.links{color:#c9bdd8}.links a:hover{color:#e8a5ff}
+.story-hero{min-height:620px;margin-top:0;border:0;border-radius:0;background:#0b0614;box-shadow:inset 0 -100px 120px #090512}
+.story-hero .hero-bg{opacity:.58;filter:saturate(1.2) contrast(1.08)}
+.story-hero:before{background:linear-gradient(90deg,rgba(8,5,17,.96) 0%,rgba(8,5,17,.78) 43%,rgba(8,5,17,.15) 100%)}
+.story-hero:after{background:linear-gradient(180deg,transparent 55%,#090512 100%)}
+.story-hero .hero-copy{width:min(700px,100%);padding:65px 76px 160px}
+.story-hero .eyebrow{color:#d34cff}.story-hero h1 em{color:#d52cff}
+.story-hero .hero-actions{margin-top:26px}
+.story-hero #storyButton{background:transparent;border:1px solid #b85bff;color:#f1d9ff;border-radius:999px;padding:13px 25px;box-shadow:none}
+.story-hero #storyButton:hover{background:#a51bdf22}
+.story-hero .support-actions{position:absolute;z-index:5;left:50%;bottom:68px;transform:translateX(-50%);margin:0;justify-content:center;width:max-content;max-width:calc(100% - 34px)}
+.story-hero .support-actions .btn{font-size:17px;padding:17px 34px;border:2px solid #c34aff;background:linear-gradient(110deg,#b51ce8,#7210c8);border-radius:999px;box-shadow:0 0 22px #b22cff55;color:#fff;white-space:normal}
+.story-hero .support-actions .btn:hover{filter:brightness(1.15);box-shadow:0 0 30px #c34aff88}
+.story-dots{bottom:22px}.story-dot.active{background:#d52cff}
+.story-arrow{border-color:#d7a1ff88;background:#10091bbd}
+.section{padding-top:38px}
+.section-head .eyebrow,.news small,.shelf-label{color:#d35aff}
+.news{background:linear-gradient(160deg,#120d20,#0d0a17);border:1px solid #48245e;border-radius:17px;box-shadow:0 12px 28px #0004}
+.news img{height:190px}.news-body{padding:18px}.news h3{color:#f8f1ff}.news p{color:#bdb2ca}.news a{color:#db63ff}
+.anime{background:#100d1c;border-color:#352044}.anime:hover{border-color:#b33bdf;box-shadow:0 12px 30px #8c20b833}
+.btn{background:linear-gradient(110deg,#c22bea,#7c20d5)}
+.chip.active,.chip:hover{background:#3a174d;border-color:#bd4ce8}
+.search input:focus{border-color:#c34aff}.footer{border-color:#352044}
+@media(max-width:700px){
+ .story-hero{min-height:560px}.story-hero .hero-copy{padding:46px 28px 165px}
+ .story-hero .support-actions{bottom:66px}.story-hero .support-actions .btn{font-size:14px;padding:14px 20px}
+ .story-dots{bottom:22px}.news img{height:150px}
+}
+@media(max-width:430px){
+ .story-hero{min-height:575px}.story-hero .hero-copy{padding-left:24px;padding-right:24px}
+ .story-hero .support-actions{width:calc(100% - 36px)}.story-hero .support-actions .btn{width:100%}
+}
+
 </style>
 <div class="support-card">
   <div class="eyebrow">CONSTRUA ESSE PROJETO COM A GENTE</div>
