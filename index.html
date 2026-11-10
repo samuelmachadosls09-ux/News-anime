@@ -111,6 +111,12 @@ body>header,body>main,body>footer{position:relative;z-index:1}
 #em-alta #trendingGrid>.anime,#recomendacoes #recommendationsGrid>.anime{align-self:flex-start!important;height:fit-content!important;min-height:0!important;flex-grow:0!important}
 
 
+/* Cards compactos: episódios e temporada atual seguem a altura do próprio conteúdo */
+#episodios #episodesGrid,#temporada-atual #currentSeasonGrid{align-items:flex-start!important}
+#episodios #episodesGrid>.anime,#temporada-atual #currentSeasonGrid>.anime{align-self:flex-start!important;height:fit-content!important;min-height:0!important;flex-grow:0!important}
+#episodios #episodesGrid>.anime .info,#temporada-atual #currentSeasonGrid>.anime .info{height:auto;min-height:0}
+#episodios,#temporada-atual{padding-bottom:8px}
+
 /* NOVA IDENTIDADE VISUAL — referência aprovada */
 :root{--bg:#080511;--panel:#100d1c;--panel2:#1a1230;--text:#faf7ff;--muted:#b7adc9;--pink:#d12cff;--cyan:#c65cff;--line:#352044}
 body{background:radial-gradient(ellipse at 50% 0%,#1b0c2d 0%,#080511 48%,#07040d 100%)}
