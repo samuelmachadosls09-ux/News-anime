@@ -324,12 +324,12 @@ async function fillEpisodes(){
  const target=document.getElementById("episodesGrid");
  try{
   const result=await api("https://cosmonautageek.com/api/v1/?r=episodios");
-  const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]/g,"");
+  const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
   const timeFor=ep=>{
    const key=norm(ep.titulo)+"|"+ep.data+"|"+(ep.episodio||"estreia");
    if(key==="blackclover2ndseason|2026-11-14|7")return "12:00";
    if(key==="tokyorevengerssantensensouhen|2026-11-13|7")return "14:00";
-   return /^\\d{2}:\\d{2}$/.test(String(ep.hora||""))?ep.hora:"23:59";
+   return /^\d{2}:\d{2}$/.test(String(ep.hora||""))?ep.hora:"23:59";
   };
   const now=Date.now(),week=7*24*60*60*1000;
   const recentItems=[
@@ -357,7 +357,6 @@ async function fillEpisodes(){
   const updated=result.atualizado_em?new Date(result.atualizado_em).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}):"";
   target.innerHTML=items.map(ep=>{
    const date=new Date(ep.data+"T12:00:00-03:00").toLocaleDateString("pt-BR",{timeZone:"America/Sao_Paulo",weekday:"short",day:"2-digit",month:"2-digit"});
-   const time=ep.hora||"Horário a confirmar";
    const displayTime=timeFor(ep)==="23:59"&&!ep.hora?"Horário a confirmar":timeFor(ep);
    const episodeLabel=ep.estreia?"ESTREIA":"EP. "+(ep.episodio||"—");
    const tag=(ep.recent?"LANÇADO · ":"")+date.toUpperCase()+" · "+displayTime;
