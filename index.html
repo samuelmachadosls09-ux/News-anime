@@ -281,9 +281,9 @@ async function fillBrazilTrending(){
  const target=document.getElementById("trendingGrid");
  try{
   const activity=await api("https://cosmonautageek.com/api/v1/?r=assistindo");
-  const norm=value=>String(value||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
+  const norm=value=>String(value||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]/g,"");
   const items=[],seen=new Set();
-  let weeklyDescription="";
+  let weeklyDescription="",weeklyIncluded=false;
   for(const item of (activity.itens||[])){
    if(item.tipo!=="anime")continue;
    const key=norm(item.titulo);
@@ -293,13 +293,19 @@ async function fillBrazilTrending(){
   }
   try{
    const weekly=await api("https://cosmonautageek.com/api/v1/?r=ranking");
-   weeklyDescription=weekly.descricao||"";
-   for(const item of (weekly.itens||[])){
-    const key=norm(item.titulo);
-    if(!key||seen.has(key))continue;
-    items.push(Object.assign({},item,{origem:"weekly"}));
-    seen.add(key);
-    if(items.length>=20)break;
+   const weeklyItems=weekly.itens||[];
+   const maxVotes=Math.max(0,...weeklyItems.map(item=>Number(item.votos)||0));
+   if(maxVotes>=10){
+    weeklyDescription=weekly.descricao||"";
+    const before=items.length;
+    for(const item of weeklyItems){
+     const key=norm(item.titulo);
+     if(!key||seen.has(key))continue;
+     items.push(Object.assign({},item,{origem:"weekly"}));
+     seen.add(key);
+     if(items.length>=20)break;
+    }
+    weeklyIncluded=items.length>before;
    }
   }catch(e){}
   const selected=items.slice(0,20);
@@ -315,7 +321,10 @@ async function fillBrazilTrending(){
    return '<a class="anime" href="'+esc(a.url||"https://cosmonautageek.com")+'" target="_blank" rel="noopener noreferrer"><div class="poster-wrap"><img class="poster" src="'+esc(a.imagem||"")+'" alt="Capa de '+esc(a.titulo||"anime")+'" loading="lazy"><span class="play">'+rankText+'</span></div><div class="info"><span class="shelf-tag">'+tagText+'</span><h3>'+esc(a.titulo||"Anime")+'</h3><div class="meta"><span>'+metaText+'</span><span class="score">'+score+'</span></div></div></a>';
   }).join("");
   const note=document.getElementById("trendingUpdate");
-  if(note)note.textContent="Atividade dos últimos 30 dias, complementada pela votação semanal da comunidade"+(weeklyDescription?" ("+weeklyDescription+")":"")+". Atualizado"+(updated?" em "+updated+" (Brasília)":"")+". Fonte: Cosmonauta Geek · dados abertos, licença CC BY 4.0.";
+  if(note){
+   const basis=weeklyIncluded?"Atividade dos últimos 30 dias, complementada pela votação semanal da comunidade":"Atividade dos últimos 30 dias; ranking semanal não incluído por baixa amostragem";
+   note.textContent=basis+(weeklyDescription?" ("+weeklyDescription+")":"")+". Atualizado"+(updated?" em "+updated+" (Brasília)":"")+". Fonte: Cosmonauta Geek · dados abertos, licença CC BY 4.0.";
+  }
  }catch(e){
   target.innerHTML='<div class="status">O ranking brasileiro não pôde ser atualizado agora. Tente novamente mais tarde.</div>';
  }
