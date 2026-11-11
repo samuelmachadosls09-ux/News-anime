@@ -251,7 +251,7 @@ async function fillUpcomingShelf(){
  try{
   const result=await api('https://api.tenrai.org/v1/seasons/upcoming?limit=20');
   const seenIds=new Set(),seenTitles=new Set();
-  const normTitle=value=>String(value||'').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+  const normTitle=value=>String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
   const items=(result.data||[]).filter(a=>{
    const id=String(a?.mal_id||''),key=normTitle(a?.title_english||a?.title||'');
    if(!a||!id||!a.title||!key||seenIds.has(id)||seenTitles.has(key))return false;
@@ -261,7 +261,7 @@ async function fillUpcomingShelf(){
   const releaseDate=a=>{
    const raw=a.aired?.from;
    if(!raw)return 'Data a confirmar';
-   const match=String(raw).match(/^(\\d{4})-(\\d{2})-(\\d{2})/);
+   const match=String(raw).match(/^(\d{4})-(\d{2})-(\d{2})/);
    if(!match)return 'Data a confirmar';
    return new Date(Number(match[1]),Number(match[2])-1,Number(match[3])).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
   };
@@ -270,7 +270,7 @@ async function fillUpcomingShelf(){
    const date=releaseDate(a);
    const broadcast=a.broadcast?.string||'Horário ainda não divulgado';
    const studios=(a.studios||[]).map(x=>x.name).filter(Boolean).slice(0,2).join(', ');
-   const synopsis=(a.synopsis||'Sinopse ainda não divulgada.').replace(/\\s+/g,' ').trim();
+   const synopsis=(a.synopsis||'Sinopse ainda não divulgada.').replace(/\s+/g,' ').trim();
    const shortSynopsis=synopsis.length>190?synopsis.slice(0,187).trim()+'…':synopsis;
    return '<article class="anime upcoming-anime" data-shelf-id="'+a.mal_id+'"><div class="poster-wrap"><img class="poster" src="'+esc(image)+'" alt="Capa de '+esc(a.title)+'" loading="lazy"><span class="play">▶ Ver detalhes</span></div><div class="info"><span class="shelf-tag">PRÓXIMAS ESTREIAS</span><h3>'+esc(a.title)+'</h3><p class="upcoming-synopsis">'+esc(shortSynopsis)+'</p><div class="upcoming-facts"><span>📅 <b>Estreia:</b> '+esc(date)+'</span><span>🕒 <b>Exibição:</b> '+esc(broadcast)+'</span>'+(studios?'<span>🎬 <b>Estúdio:</b> '+esc(studios)+'</span>':'')+'</div><div class="meta"><span>'+(a.year||a.aired?.prop?.from?.year||'Ano a confirmar')+'</span><span class="score">★ '+(a.score||'—')+'</span></div></div></article>';
   }).join('');
