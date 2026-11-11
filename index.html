@@ -281,7 +281,7 @@ async function fillBrazilTrending(){
  const target=document.getElementById("trendingGrid");
  try{
   const activity=await api("https://cosmonautageek.com/api/v1/?r=assistindo");
-  const norm=value=>String(value||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]/g,"");
+  const norm=value=>String(value||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
   const items=[],seen=new Set();
   let weeklyDescription="",weeklyIncluded=false;
   for(const item of (activity.itens||[])){
