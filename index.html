@@ -324,29 +324,46 @@ async function fillEpisodes(){
  const target=document.getElementById("episodesGrid");
  try{
   const result=await api("https://cosmonautageek.com/api/v1/?r=episodios");
-  const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"");
-  const seen=new Set(),now=Date.now();
-  const items=(result.itens||[]).filter(ep=>ep&&ep.data&&ep.titulo).filter(ep=>{
-   const time=/^\d{2}:\d{2}$/.test(String(ep.hora||""))?ep.hora:"23:59";
-   const timestamp=Date.parse(ep.data+"T"+time+":00-03:00");
-   if(Number.isFinite(timestamp)&&timestamp<now)return false;
+  const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]/g,"");
+  const timeFor=ep=>{
+   const key=norm(ep.titulo)+"|"+ep.data+"|"+(ep.episodio||"estreia");
+   if(key==="blackclover2ndseason|2026-11-14|7")return "12:00";
+   if(key==="tokyorevengerssantensensouhen|2026-11-13|7")return "14:00";
+   return /^\\d{2}:\\d{2}$/.test(String(ep.hora||""))?ep.hora:"23:59";
+  };
+  const now=Date.now(),week=7*24*60*60*1000;
+  const recentItems=[
+   {data:"2026-11-08",hora:"04:30",titulo:"Ao no Hako Season 2",episodio:5,estreia:false,url:"https://cosmonautageek.com/anime/3008",imagem:"https://cosmonautageek.com/images/capa_6a4d5694f00265.07427395.jpg",recent:true},
+   {data:"2026-11-07",hora:"12:00",titulo:"Black Clover 2nd Season",episodio:6,estreia:false,url:"https://cosmonautageek.com/anime/6461",imagem:"https://cosmonautageek.com/images/6461.jpg",recent:true},
+   {data:"2026-11-06",hora:"14:00",titulo:"Tokyo Revengers: Santen Sensou-hen",episodio:6,estreia:false,url:"https://cosmonautageek.com/anime/21254",imagem:"https://cosmonautageek.com/images/jikan_6aedf10af0bd26.94341971.jpg",recent:true}
+  ].filter(ep=>{
+   const timestamp=Date.parse(ep.data+"T"+timeFor(ep)+":00-03:00");
+   return Number.isFinite(timestamp)&&timestamp<=now&&timestamp>=now-week;
+  }).sort((a,b)=>(b.data+b.hora).localeCompare(a.data+a.hora));
+  const seen=new Set(recentItems.map(ep=>norm(ep.titulo)+"|"+ep.data+"|"+(ep.episodio||"estreia")));
+  const upcomingItems=(result.itens||[]).filter(ep=>ep&&ep.data&&ep.titulo).filter(ep=>{
+   const timestamp=Date.parse(ep.data+"T"+timeFor(ep)+":00-03:00");
+   if(!Number.isFinite(timestamp)||timestamp<now)return false;
    const key=norm(ep.titulo)+"|"+ep.data+"|"+(ep.episodio||"estreia");
    if(!key||seen.has(key))return false;
    seen.add(key);
    return true;
-  }).sort((a,b)=>(a.data+(a.hora||"23:59")).localeCompare(b.data+(b.hora||"23:59"))).slice(0,20);
+  }).sort((a,b)=>(a.data+timeFor(a)).localeCompare(b.data+timeFor(b))).slice(0,Math.max(0,20-recentItems.length));
+  const items=[...recentItems,...upcomingItems];
   if(!items.length){
-   target.innerHTML='<div class="status">Nenhum episódio futuro foi encontrado na agenda dos próximos dias.</div>';
+   target.innerHTML='<div class="status">Nenhum episódio recente ou futuro foi encontrado na agenda.</div>';
    return;
   }
   const updated=result.atualizado_em?new Date(result.atualizado_em).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}):"";
   target.innerHTML=items.map(ep=>{
    const date=new Date(ep.data+"T12:00:00-03:00").toLocaleDateString("pt-BR",{timeZone:"America/Sao_Paulo",weekday:"short",day:"2-digit",month:"2-digit"});
    const time=ep.hora||"Horário a confirmar";
+   const displayTime=timeFor(ep)==="23:59"&&!ep.hora?"Horário a confirmar":timeFor(ep);
    const episodeLabel=ep.estreia?"ESTREIA":"EP. "+(ep.episodio||"—");
-   const tag=date.toUpperCase()+" · "+time;
-   return '<a class="anime" href="'+esc(ep.url||"https://cosmonautageek.com")+'" target="_blank" rel="noopener noreferrer"><div class="poster-wrap"><img class="poster" src="'+esc(ep.imagem||"")+'" alt="Capa de '+esc(ep.titulo)+'" loading="lazy"><span class="play">'+episodeLabel+'</span></div><div class="info"><span class="shelf-tag">'+tag+'</span><h3>'+esc(ep.titulo)+'</h3><div class="meta"><span>Horário de Brasília</span><span class="score">'+(ep.estreia?"NOVA SÉRIE":"EP. "+(ep.episodio||"—"))+'</span></div></div></a>';
-  }).join("")+'<div class="status" style="flex-basis:100%">Agenda dos próximos 7 dias, com horários de Brasília. Episódios já lançados são ocultados. Atualizada'+(updated?" em "+updated:"")+'. Fonte: <a href="https://cosmonautageek.com/api/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Cosmonauta Geek</a> · licença CC BY 4.0.</div>';
+   const tag=(ep.recent?"LANÇADO · ":"")+date.toUpperCase()+" · "+displayTime;
+   const metaLabel=ep.recent?"Já disponível":"Horário de Brasília";
+   return '<a class="anime" href="'+esc(ep.url||"https://cosmonautageek.com")+'" target="_blank" rel="noopener noreferrer"><div class="poster-wrap"><img class="poster" src="'+esc(ep.imagem||"")+'" alt="Capa de '+esc(ep.titulo)+'" loading="lazy"><span class="play">'+episodeLabel+'</span></div><div class="info"><span class="shelf-tag">'+tag+'</span><h3>'+esc(ep.titulo)+'</h3><div class="meta"><span>'+metaLabel+'</span><span class="score">'+(ep.estreia?"NOVA SÉRIE":"EP. "+(ep.episodio||"—"))+'</span></div></div></a>';
+  }).join("")+'<div class="status" style="flex-basis:100%">Lançamentos recentes dos últimos 7 dias e agenda dos próximos 7 dias. Horários de Brasília. Recentes: <a href="https://komacal.com/it/anime/189123-ao-no-hako-season-2" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Komacal</a>, <a href="https://animeflix.com.br/black-clover-temporada-2-episodio-6-data-hora-de-estreia-e-previas/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">AnimeFlix</a> e <a href="https://criticalhits.com.br/anime/tokyo-revengers-revela-calendario-completo-da-4a-temporada/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Critical Hits</a>. Próximos episódios: <a href="https://cosmonautageek.com/api/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Cosmonauta Geek</a> · licença CC BY 4.0. Atualizada'+(updated?" em "+updated:"")+'.</div>';
  }catch(e){
   target.innerHTML='<div class="status">Não foi possível carregar a agenda de episódios agora. Tente novamente mais tarde.</div>';
  }
@@ -395,6 +412,97 @@ document.getElementById('closeModal').onclick=()=>document.getElementById('modal
 /* Notícias atuais: nove matérias verificadas, com leitura dentro do News Anime */
 const newsItems=[
  {
+  "kicker": "PARCERIA E INVESTIMENTO · 11 NOV 2026",
+  "date": "11/11/2026",
+  "sourceName": "CyberAgent · comunicado oficial",
+  "title": "CyberAgent fecha parceria com MAPPA e investe na empresa-mãe do estúdio",
+  "summary": "As empresas anunciaram uma aliança para ampliar projetos de anime, da produção e distribuição a jogos, produtos e eventos. A participação adquirida pela CyberAgent na MHD não teve percentual divulgado.",
+  "details": [
+   "O acordo combina a capacidade de produção e licenciamento da MAPPA com a experiência da CyberAgent em mídia, jogos e publicidade. As empresas já haviam colaborado em planejamento, transmissão, streaming e adaptações de jogos.",
+   "A MAPPA é descrita no comunicado como um estúdio independente. O anúncio não confirma novos títulos nem mudanças em produções específicas."
+  ],
+  "image": "https://d1kdu080g8vme4.cloudfront.net/files/topics/34003_ext_03_en_0.jpg?height=464&v=1794370131&version=1794370131&width=824",
+  "source": "https://www.cyberagent.co.jp/en/news/detail/id=34003"
+ },
+ {
+  "kicker": "PRÉVIA DO EPISÓDIO 57 · 11 NOV 2026",
+  "date": "11/11/2026",
+  "sourceName": "Pony Canyon · prévia oficial",
+  "title": "Tokyo Revengers divulga sinopse e prévias do episódio 57",
+  "summary": "O episódio “A sense of foreboding” acompanha Takemichi após despertar uma nova habilidade e ter uma visão preocupante sobre Senju. A exibição japonesa está marcada para 13 de novembro, às 1h23 (JST).",
+  "details": [
+   "Na reunião da Brahman, Senju revela que pretende iniciar a Guerra dos Três Titãs contra Kanto Manji e Rokuhara Tandai. Antes do confronto, ela e Takemichi se aproximam durante um passeio ao parque de diversões.",
+   "O horário de 1h23 é o da transmissão japonesa informado pela TBS (JST). A estreia no Disney+ Brasil segue a programação local da plataforma."
+  ],
+  "image": "https://cimg.kgl-systems.io/camion/files/dengeki/78288/afe5df232cafa4c4e0f1a0294418e5660.jpg?x=1280",
+  "source": "https://news.ponycanyon.co.jp/2026/11/127711"
+ },
+ {
+  "kicker": "3ª TEMPORADA · 11 NOV 2026",
+  "date": "11/11/2026",
+  "sourceName": "JBox · anúncio da Aniplex",
+  "title": "Mashle: 3ª temporada estreia em 9 de janeiro de 2027",
+  "summary": "O primeiro trailer completo e um novo pôster foram divulgados. Soma Saito e Ryota Suzuki entram no elenco como Domina Blowelive e Levi Rosequartz.",
+  "details": [
+   "A temporada adapta o arco Tri-Magic-Athalon Divine Visionary Final Exam. A animação continua com a A-1 Pictures, sob direção de Tomonari Tanaka e roteiro de Yosuke Kuroda.",
+   "A estreia japonesa está marcada para 9 de janeiro de 2027. A Crunchyroll confirmou a transmissão internacional; o horário ainda não foi divulgado."
+  ],
+  "image": "https://img.youtube.com/vi/4cBRNisl5qA/hqdefault.jpg",
+  "source": "https://www.jbox.com.br/2026/11/11/mashle-magia-e-musculos-divulga-teaser-poster-e-atores-da-3a-temporada/"
+ },
+ {
+  "kicker": "PRÉVIA DO EPISÓDIO 7 · 11 NOV 2026",
+  "date": "11/11/2026",
+  "sourceName": "Anime Corner · prévia oficial",
+  "title": "Black Clover divulga prévias do episódio 7 da 2ª temporada",
+  "summary": "O episódio 177 na contagem geral, “Beyond Never Giving Up”, mostra Asta e Luck chegando para reforçar Noelle e os Cavaleiros Mágicos contra Megicula.",
+  "details": [
+   "A sinopse oficial indica que a magia de maldição de Megicula impede os Cavaleiros de agir livremente. A chegada de Asta e Luck inicia uma nova ofensiva contra o demônio.",
+   "O episódio está previsto para sábado, 14 de novembro. A estreia na Crunchyroll Brasil está prevista para 12h (horário de Brasília)."
+  ],
+  "image": "https://m.imageimg.net/upload/artist_img/BCLVR-OFCL-0002/03f5fa53c98027737aae0899688a495248d0181c_6aeaba1e77834.jpg",
+  "source": "https://animecorner.me/black-clover-season-2-episode-7-preview-continues-fight-against-megicula/"
+ },
+ {
+  "kicker": "NOVO ANIME · 11 NOV 2026",
+  "date": "11/11/2026",
+  "sourceName": "Pony Canyon · comunicado oficial",
+  "title": "Nanatsu-ya: Shinobu and Her Jewelry Box ganhará anime em 2027",
+  "summary": "O mangá de Tomoko Ninomiya foi anunciado como série de TV para 2027, com teaser, visual e equipe principal revelados. A produção ficará a cargo da J.C.STAFF.",
+  "details": [
+   "Chiaki Kon dirige a série, Seishi Minakami cuida da composição e Mai Furuki assina o design de personagens. A história acompanha uma jovem ligada a uma casa de penhores e seu dom para perceber a energia das pedras preciosas.",
+   "A estreia foi anunciada apenas para 2027; ainda não há mês, dia ou elenco de voz confirmados."
+  ],
+  "image": "https://media.eiga.com/images/anime/news/127855/photo/b160c3a944014e2b/320.jpg",
+  "source": "https://news.ponycanyon.co.jp/2026/11/127721"
+ },
+ {
+  "kicker": "2ª TEMPORADA · 11 NOV 2026",
+  "date": "11/11/2026",
+  "sourceName": "Site oficial de Berserk of Gluttony",
+  "title": "Berserk of Gluttony confirma 2ª temporada para abril de 2027",
+  "summary": "A continuação ganhou mês de estreia e um novo teaser visual. O anúncio oficial confirmou que a série retorna em abril de 2027.",
+  "details": [
+   "O site oficial divulgou a nova arte promocional junto da confirmação da segunda temporada. A primeira temporada continua disponível em serviços de streaming.",
+   "O dia exato, o horário de transmissão, o elenco e a distribuição internacional da nova temporada ainda não foram anunciados."
+  ],
+  "image": "https://thetv.jp/i/nw/1382383/ogp_VBaKjpRQ.jpg?w=1284",
+  "source": "https://bousyoku-anime.com/news/157/"
+ },
+ {
+  "kicker": "VÍDEO ESPECIAL · 10 NOV 2026",
+  "date": "10/11/2026",
+  "sourceName": "Portal oficial de JoJo",
+  "title": "Steel Ball Run lança vídeo especial dedicado aos Stands",
+  "summary": "O especial “HERE COME THE STANDS” reúne habilidades já apresentadas na série e inclui cenas inéditas. O vídeo foi divulgado pela equipe oficial da franquia.",
+  "details": [
+   "O material destaca os Stands que já apareceram na história e suas habilidades, antecipando novos confrontos. Há versões japonesa e inglesa no canal da Warner Bros. Japan Anime.",
+   "O vídeo é promocional e não altera o calendário da série: os novos episódios continuam chegando às sextas-feiras na Netflix."
+  ],
+  "image": "https://img.youtube.com/vi/66oQRrA9_HE/hqdefault.jpg",
+  "source": "https://jojo-portal.com/news/anime/670/"
+ },
+ {
   "kicker": "NOVA ADAPTAÇÃO · 10 NOV 2026",
   "date": "10/11/2026",
   "sourceName": "Manga Box · comunicado oficial",
@@ -408,19 +516,6 @@ const newsItems=[
   "source": "https://prtimes.jp/main/html/rd/p/000000054.000070922.html"
  },
  {
-  "kicker": "TRAILER, VISUAL, ELENCO E ESTREIA · 09 NOV 2026",
-  "date": "09/11/2026",
-  "sourceName": "Anime Corner / site oficial de My Crush’s Crush",
-  "title": "My Crush’s Crush revela trailer, visual, equipe e elenco para abril de 2027",
-  "summary": "A adaptação do mangá de Sekina Aoi e Ryō Tsuzura divulgou seu primeiro trailer e visual, além da equipe e do elenco principal. A estreia está prevista para abril de 2027.",
-  "details": [
-   "Kazuomi Koga dirige a série no estúdio project No.9. Yoriko Tomita cuida da composição da série, Takayuki Noguchi do design de personagens e Rina Tayama da música.",
-   "Gakuto Kajiwara interpreta Sora Akizuki, Haruna Mikawa faz Asahi Suzukaze e Nene Hieda dá voz a Miya Fuwa. O anime ainda não tem dia exato de estreia."
-  ],
-  "image": "https://bokusuki.com/assets/images/top/mv/mv01.jpg?202611081531=",
-  "source": "https://animecorner.me/my-crushs-crush-anime-reveals-teaser-visual-trailer-staff-cast-april-2027-premiere/"
- },
- {
   "kicker": "4ª TEMPORADA E 2º FILME · 09 NOV 2026",
   "date": "09/11/2026",
   "sourceName": "Anime!Anime! / anúncio do evento oficial",
@@ -432,84 +527,6 @@ const newsItems=[
   ],
   "image": "https://animeanime.jp/imgs/zoom/953366.jpg",
   "source": "https://s.animeanime.jp/article/2026/11/09/104604.html"
- },
- {
-  "kicker": "5ª TEMPORADA · 09 NOV 2026",
-  "date": "09/11/2026",
-  "sourceName": "Anime!Anime! / site oficial de Minami-ke",
-  "title": "Minami-ke: Korekara revela teaser e estreia em abril de 2027",
-  "summary": "A quinta série de TV da franquia ganhou teaser, visual e informações de produção. Rina Satō, Marina Inoue e Minori Chihara retornam como as três irmãs Minami.",
-  "details": [
-   "Jun’ichi Kitamura dirige a produção da LIDEN FILMS, com Takamitsu Kōno na composição da série e Nobuhiro Andō no design de personagens.",
-   "A estreia japonesa está prevista para abril de 2027. O dia exato ainda não foi anunciado."
-  ],
-  "image": "https://prcdn.freetls.fastly.net/release_image/84062/164/84062-164-972485da1a79e9830f64bfa45072cb91-960x1280.png",
-  "source": "https://animeanime.jp/article/2026/11/09/104621.html"
- },
- {
-  "kicker": "NETFLIX E TEMA DE ABERTURA · 09 NOV 2026",
-  "date": "09/11/2026",
-  "sourceName": "Site oficial de Hirayasumi",
-  "title": "Hirayasumi terá estreia mundial na Netflix em janeiro de 2027",
-  "summary": "A adaptação do mangá de Keigo Shinzo chegará mundialmente à Netflix em janeiro de 2027. A série também terá transmissão no Japão pela NHK General TV e no U-NEXT.",
-  "details": [
-   "Gen Hoshino foi anunciado como intérprete da nova música de abertura, escrita especialmente para o anime. O encerramento será “Fūmi Zekka”, de TOMOO.",
-   "A estreia está prevista para janeiro de 2027, mas o dia exato ainda não foi informado. A animação é produzida pela Production +h."
-  ],
-  "image": "https://hirayasumi-anime.jp/img/top/kv_main.jpg",
-  "source": "https://hirayasumi-anime.jp/"
- },
- {
-  "kicker": "NOVO ESPECIAL E MÚSICA · 09 NOV 2026",
-  "date": "09/11/2026",
-  "sourceName": "Anime!Anime!",
-  "title": "Milky☆Byway revela Chiharu e Makina e apresenta música de Poppy-kun",
-  "summary": "O novo especial de Milky☆Byway divulgou visuais das personagens Chiharu e Makina. Também foi apresentada uma música de Poppy-kun, personagem de Milky☆Subway, cantada por Shoko Haida.",
-  "details": [
-   "O especial se chama “Milky☆Byway Spring Special: Fear of the Cherobin Party” e está em produção. A data e a plataforma de lançamento ainda não foram anunciadas.",
-   "A música “Papipupe! Poppy-kun” tem lançamento digital previsto para 18 de dezembro de 2026."
-  ],
-  "image": "https://animeanime.jp/imgs/p/jtKDOVlKAvjRrNw8SXAVejagI61Nrq_oqaqr/953445.jpg",
-  "source": "https://animeanime.jp/article/2026/11/09/104622.html"
- },
- {
-  "kicker": "PRÉ-ESTREIA E BASTIDORES · 09 NOV 2026",
-  "date": "09/11/2026",
-  "sourceName": "Anime!Anime! / site oficial de Votoms",
-  "title": "Votoms: Gray Witch realiza sessão de pré-estreia antes da estreia nos cinemas",
-  "summary": "O novo filme de Armored Trooper Votoms teve uma sessão de apresentação em Tóquio com o diretor Mamoru Oshii e integrantes do elenco. A estreia japonesa está marcada para 20 de novembro de 2026.",
-  "details": [
-   "A produção comemorativa dos 50 anos da Sunrise acompanha Ash, uma soldado conhecida como “bruxa” por sobreviver a missões extremas, e a oficial Maki, encarregada de investigar seu passado.",
-   "Miyuki Sawashiro, Asami Ando, Shinichiro Miki e Sumire Uesaka participaram da apresentação. O filme é dirigido por Mamoru Oshii, com participação de Production I.G na produção."
-  ],
-  "image": "https://www.votoms-gh.com/assets/img/top/kv2.webp",
-  "source": "https://animeanime.jp/article/2026/11/09/104631.html"
- },
- {
-  "kicker": "VISUAL, TEASER E ELENCO · 06 NOV 2026",
-  "date": "06/11/2026",
-  "sourceName": "Site oficial de Namidaame to Serenade",
-  "title": "Namidaame to Serenade confirma estreia em abril de 2027 e revela elenco",
-  "summary": "A adaptação do mangá de Haruka Kawachi ganhou seu primeiro visual e teaser. Yume Miyamoto interpretará Hina Katagiri, e Takeo Otsuka dará voz a Takayuki Hongo.",
-  "details": [
-   "A história acompanha Hina, uma estudante que viaja no tempo até o Japão da era Meiji e conhece Takayuki, herdeiro de uma família influente. A animação será produzida pela Tezuka Productions, com direção de Takashi Kamei.",
-   "A estreia está confirmada para abril de 2027. O dia exato ainda não foi anunciado."
-  ],
-  "image": "https://namidaame-anime.com/common/images/kv02.jpg",
-  "source": "https://namidaame-anime.com/"
- },
- {
-  "kicker": "TRAILER, ELENCO E ESTREIA · 05 NOV 2026",
-  "date": "05/11/2026",
-  "sourceName": "Twin Engine · comunicado oficial de Spirit Circle",
-  "title": "Spirit Circle revela trailer, elenco e estreia em dezembro de 2026",
-  "summary": "A adaptação do mangá de Satoshi Mizukami ganhou primeiro PV, visual e elenco principal. A série terá 18 episódios e começa a ser exibida e distribuída em dezembro de 2026.",
-  "details": [
-   "A trama acompanha Futa, um estudante que vê espíritos, e Koko, uma aluna transferida ligada a ele por um conflito que atravessa vidas passadas. Kazuki Ura, Anna Nagase, Eri Yukimura e Yuichi Nakamura estão no elenco principal.",
-   "A animação é uma produção conjunta de NAGOMI e EOTA. A confirmação de dezembro ainda não inclui um dia específico de estreia."
-  ],
-  "image": "https://www.spiritcircle.jp/assets/img/top/visual/visual1.jpg",
-  "source": "https://prtimes.jp/main/html/rd/p/000000155.000032680.html"
  }
 ];
 function openNews(index){
