@@ -344,21 +344,32 @@ async function fillEpisodes(){
   const recentItems=[
    {data:"2026-11-08",hora:"04:30",titulo:"Ao no Hako Season 2",episodio:5,estreia:false,url:"https://cosmonautageek.com/anime/3008",imagem:"https://cosmonautageek.com/images/capa_6a4d5694f00265.07427395.jpg",recent:true},
    {data:"2026-11-07",hora:"12:00",titulo:"Black Clover 2nd Season",episodio:6,estreia:false,url:"https://cosmonautageek.com/anime/6461",imagem:"https://cosmonautageek.com/images/6461.jpg",recent:true},
-   {data:"2026-11-06",hora:"14:00",titulo:"Tokyo Revengers: Santen Sensou-hen",episodio:6,estreia:false,url:"https://cosmonautageek.com/anime/21254",imagem:"https://cosmonautageek.com/images/jikan_6aedf10af0bd26.94341971.jpg",recent:true}
+   {data:"2026-11-06",hora:"14:00",titulo:"Tokyo Revengers: Santen Sensou-hen",episodio:6,estreia:false,url:"https://cosmonautageek.com/anime/21254",imagem:"https://cosmonautageek.com/images/jikan_6aedf10af0bd26.94341971.jpg",recent:true},
+   {data:"2026-11-12",hora:"13:00",titulo:"Dragon Ball Super: Beerus (estreia dublada)",episodio:1,estreia:false,url:"https://cosmonautageek.com/anime/5783",imagem:"https://cosmonautageek.com/images/5783.jpg",recent:true,specialStatus:"ESTREIA DUBLADA"}
   ].filter(ep=>{
    const timestamp=Date.parse(ep.data+"T"+timeFor(ep)+":00-03:00");
    return Number.isFinite(timestamp)&&timestamp<=now&&timestamp>=now-week;
   }).sort((a,b)=>(b.data+b.hora).localeCompare(a.data+a.hora));
+  const scheduledItems=(result.itens||[]).filter(ep=>ep&&ep.data&&ep.titulo);
   const seen=new Set(recentItems.map(ep=>norm(ep.titulo)+"|"+ep.data+"|"+(ep.episodio||"estreia")));
-  const upcomingItems=(result.itens||[]).filter(ep=>ep&&ep.data&&ep.titulo).filter(ep=>{
+  const elapsedItems=scheduledItems.filter(ep=>{
    const timestamp=Date.parse(ep.data+"T"+timeFor(ep)+":00-03:00");
-   if(!Number.isFinite(timestamp)||timestamp<now)return false;
+   if(!Number.isFinite(timestamp)||timestamp>now||timestamp<now-week)return false;
    const key=norm(ep.titulo)+"|"+ep.data+"|"+(ep.episodio||"estreia");
    if(!key||seen.has(key))return false;
    seen.add(key);
    return true;
-  }).sort((a,b)=>(a.data+timeFor(a)).localeCompare(b.data+timeFor(b))).slice(0,Math.max(0,20-recentItems.length));
-  const items=[...recentItems,...upcomingItems];
+  }).map(ep=>({...ep,recent:true}));
+  const recent=[...recentItems,...elapsedItems].sort((a,b)=>(b.data+timeFor(b)).localeCompare(a.data+timeFor(a))).slice(0,20);
+  const upcomingItems=scheduledItems.filter(ep=>{
+   const timestamp=Date.parse(ep.data+"T"+timeFor(ep)+":00-03:00");
+   if(!Number.isFinite(timestamp)||timestamp<=now)return false;
+   const key=norm(ep.titulo)+"|"+ep.data+"|"+(ep.episodio||"estreia");
+   if(!key||seen.has(key))return false;
+   seen.add(key);
+   return true;
+  }).sort((a,b)=>(a.data+timeFor(a)).localeCompare(b.data+timeFor(b))).slice(0,Math.max(0,20-recent.length));
+  const items=[...recent,...upcomingItems];
   if(!items.length){
    target.innerHTML='<div class="status">Nenhum episódio recente ou futuro foi encontrado na agenda.</div>';
    return;
@@ -367,10 +378,10 @@ async function fillEpisodes(){
   target.innerHTML=items.map(ep=>{
    const date=new Date(ep.data+"T12:00:00-03:00").toLocaleDateString("pt-BR",{timeZone:"America/Sao_Paulo",weekday:"short",day:"2-digit",month:"2-digit"});
    const displayTime=timeFor(ep)==="23:59"&&!ep.hora?"Horário a confirmar":timeFor(ep);
-   const episodeLabel=ep.estreia?"ESTREIA":"EP. "+(ep.episodio||"—");
-   const tag=(ep.recent?"LANÇADO · ":"")+date.toUpperCase()+" · "+displayTime;
-   const metaLabel=ep.recent?"Já disponível":"Horário de Brasília";
-   return '<a class="anime" href="'+esc(ep.url||"https://cosmonautageek.com")+'" target="_blank" rel="noopener noreferrer"><div class="poster-wrap"><img class="poster" src="'+esc(ep.imagem||"")+'" alt="Capa de '+esc(ep.titulo)+'" loading="lazy"><span class="play">'+episodeLabel+'</span></div><div class="info"><span class="shelf-tag">'+tag+'</span><h3>'+esc(ep.titulo)+'</h3><div class="meta"><span>'+metaLabel+'</span><span class="score">'+(ep.estreia?"NOVA SÉRIE":"EP. "+(ep.episodio||"—"))+'</span></div></div></a>';
+   const episodeLabel=ep.specialStatus|| (ep.estreia?"ESTREIA":"EP. "+(ep.episodio||"—"));
+   const tag=(ep.recent?(ep.specialStatus?"ESTREIA DUBLADA · ":"LANÇADO · "):"")+date.toUpperCase()+" · "+displayTime;
+   const metaLabel=ep.specialStatus?"Horário anunciado":ep.recent?"Já disponível":"Horário de Brasília";
+   return '<a class="anime" href="'+esc(ep.url||"https://cosmonautageek.com")+'" target="_blank" rel="noopener noreferrer"><div class="poster-wrap"><img class="poster" src="'+esc(ep.imagem||"")+'" alt="Capa de '+esc(ep.titulo)+'" loading="lazy"><span class="play">'+episodeLabel+'</span></div><div class="info"><span class="shelf-tag">'+tag+'</span><h3>'+esc(ep.titulo)+'</h3><div class="meta"><span>'+metaLabel+'</span><span class="score">'+(ep.specialStatus?"PT-BR":ep.estreia?"NOVA SÉRIE":"EP. "+(ep.episodio||"—"))+'</span></div></div></a>';
   }).join("")+'<div class="status" style="flex-basis:100%">Lançamentos recentes dos últimos 7 dias e agenda dos próximos 7 dias. Horários de Brasília. Recentes: <a href="https://komacal.com/it/anime/189123-ao-no-hako-season-2" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Komacal</a>, <a href="https://animeflix.com.br/black-clover-temporada-2-episodio-6-data-hora-de-estreia-e-previas/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">AnimeFlix</a> e <a href="https://criticalhits.com.br/anime/tokyo-revengers-revela-calendario-completo-da-4a-temporada/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Critical Hits</a>. Próximos episódios: <a href="https://cosmonautageek.com/api/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Cosmonauta Geek</a> · licença CC BY 4.0. Atualizada'+(updated?" em "+updated:"")+'.</div>';
  }catch(e){
   target.innerHTML='<div class="status">Não foi possível carregar a agenda de episódios agora. Tente novamente mais tarde.</div>';
@@ -420,6 +431,20 @@ document.getElementById('closeModal').onclick=()=>document.getElementById('modal
 /* Notícias atuais: nove matérias verificadas, com leitura dentro do News Anime */
 const newsItems=[
  {
+  "kicker": "ESTREIA DA DUBLAGEM · 12 NOV 2026",
+  "date": "12/11/2026",
+  "sourceDate": "06/11/2026",
+  "sourceName": "Canaltech · anúncio da Toei Animation e Crunchyroll",
+  "title": "Dragon Ball Super: Beerus estreia dublado em português no Brasil",
+  "summary": "A dublagem brasileira da edição aprimorada de Dragon Ball Super foi marcada para 12 de novembro, às 13h (horário de Brasília), exclusivamente na Crunchyroll. Os novos episódios dublados serão lançados semanalmente.",
+  "details": [
+   "A Toei Animation e a Crunchyroll anunciaram a estreia da versão em português brasileiro para 12 de novembro, às 13h, no horário de Brasília. A série já vinha sendo exibida com áudio japonês e legendas em português desde outubro.",
+   "O elenco brasileiro confirmado inclui Wendel Bezerra como Goku, Alfredo Rollo como Vegeta, Marcelo Pissardini como Beerus (Bills) e Felipe Grinnan como Whis. O anúncio foi divulgado em 5 de novembro; o Canaltech publicou os detalhes em 6 de novembro."
+  ],
+  "image": "https://tl.ctcdn.com.br/Buerdr8QlEWeB8l6KwDX_FySbN4%3D/640x360/smart/filters%3Aformat%28webp%29%3Aquality%2885%29/fe1547c0-b78b-4485-a43b-ac7b5e9a9333.jpg",
+  "source": "https://canaltech.com.br/entretenimento/dublagem-de-dragon-ball-super-beerus-estreia-em-novembro-veja-elenco/"
+ },
+{
   "kicker": "PARCERIA E INVESTIMENTO · 11 NOV 2026",
   "date": "11/11/2026",
   "sourceName": "CyberAgent · comunicado oficial",
@@ -522,19 +547,6 @@ const newsItems=[
   ],
   "image": "https://mangabox.ink/_nuxt/KV_PC.Dff8z4yj.jpg",
   "source": "https://prtimes.jp/main/html/rd/p/000000054.000070922.html"
- },
- {
-  "kicker": "4ª TEMPORADA E 2º FILME · 09 NOV 2026",
-  "date": "09/11/2026",
-  "sourceName": "Anime!Anime! / anúncio do evento oficial",
-  "title": "SPY×FAMILY confirma 4ª temporada e segundo filme para 2027",
-  "summary": "A franquia anunciou que a quarta temporada do anime de TV e um segundo longa-metragem chegarão em 2027. Um novo visual promocional da temporada também foi divulgado.",
-  "details": [
-   "O anúncio foi feito durante o evento especial da franquia realizado em 8 de novembro. O visual reúne Loid, Anya, Yor e Bond.",
-   "As datas exatas de estreia da quarta temporada e do filme ainda não foram divulgadas."
-  ],
-  "image": "https://animeanime.jp/imgs/zoom/953366.jpg",
-  "source": "https://s.animeanime.jp/article/2026/11/09/104604.html"
  }
 ];
 function openNews(index){
@@ -542,7 +554,8 @@ function openNews(index){
  if(!item)return;
  const content=document.getElementById("modalContent");
  const paragraphs=item.details.map(p=>"<p>"+esc(p)+"</p>").join("");
- content.innerHTML='<div class="reader-kicker">'+esc(item.kicker)+'</div><h2>'+esc(item.title)+'</h2><img class="reader-cover" src="'+esc(item.image)+'" alt="Imagem de '+esc(item.title)+'"><div class="reader-text"><h3>Resumo News Anime</h3><p>'+esc(item.summary)+'</p>'+paragraphs+'</div><div class="reader-note"><b>Fonte:</b> '+esc(item.sourceName)+' · publicação em '+esc(item.date)+'. Resumo redigido pelo News Anime com base na reportagem original. Consulte a fonte para atualizações.</div><a class="reader-source" href="'+esc(item.source)+'" target="_blank" rel="noopener noreferrer">Consultar fonte original ↗</a>';
+ const dateNote=item.sourceDate?'data de referência '+esc(item.date)+'; matéria publicada em '+esc(item.sourceDate):'publicação em '+esc(item.date);
+ content.innerHTML='<div class="reader-kicker">'+esc(item.kicker)+'</div><h2>'+esc(item.title)+'</h2><img class="reader-cover" src="'+esc(item.image)+'" alt="Imagem de '+esc(item.title)+'"><div class="reader-text"><h3>Resumo News Anime</h3><p>'+esc(item.summary)+'</p>'+paragraphs+'</div><div class="reader-note"><b>Fonte:</b> '+esc(item.sourceName)+' · '+dateNote+'. Resumo redigido pelo News Anime com base na reportagem original. Consulte a fonte para atualizações.</div><a class="reader-source" href="'+esc(item.source)+'" target="_blank" rel="noopener noreferrer">Consultar fonte original ↗</a>';
  document.getElementById("modal").classList.add("open");
 }
 function renderNews(){
