@@ -359,7 +359,7 @@ async function fillEpisodes(){
    if(!key||seen.has(key))return false;
    seen.add(key);
    return true;
-  }).map(ep=>({...ep,recent:true}));
+  }).map(ep=>({...ep,recent:true,scheduleOnly:true}));
   const recent=[...recentItems,...elapsedItems].sort((a,b)=>(b.data+timeFor(b)).localeCompare(a.data+timeFor(a))).slice(0,20);
   const upcomingItems=scheduledItems.filter(ep=>{
    const timestamp=Date.parse(ep.data+"T"+timeFor(ep)+":00-03:00");
@@ -379,8 +379,8 @@ async function fillEpisodes(){
    const date=new Date(ep.data+"T12:00:00-03:00").toLocaleDateString("pt-BR",{timeZone:"America/Sao_Paulo",weekday:"short",day:"2-digit",month:"2-digit"});
    const displayTime=timeFor(ep)==="23:59"&&!ep.hora?"Horário a confirmar":timeFor(ep);
    const episodeLabel=ep.specialStatus|| (ep.estreia?"ESTREIA":"EP. "+(ep.episodio||"—"));
-   const tag=(ep.recent?(ep.specialStatus?"ESTREIA DUBLADA · ":"LANÇADO · "):"")+date.toUpperCase()+" · "+displayTime;
-   const metaLabel=ep.specialStatus?"Horário anunciado":ep.recent?"Já disponível":"Horário de Brasília";
+   const tag=(ep.recent?(ep.specialStatus?"ESTREIA DUBLADA · ":ep.scheduleOnly?"AGENDA · ":"LANÇADO · "):"")+date.toUpperCase()+" · "+displayTime;
+   const metaLabel=ep.specialStatus?"Horário anunciado":ep.scheduleOnly?"Horário previsto":ep.recent?"Já disponível":"Horário de Brasília";
    return '<a class="anime" href="'+esc(ep.url||"https://cosmonautageek.com")+'" target="_blank" rel="noopener noreferrer"><div class="poster-wrap"><img class="poster" src="'+esc(ep.imagem||"")+'" alt="Capa de '+esc(ep.titulo)+'" loading="lazy"><span class="play">'+episodeLabel+'</span></div><div class="info"><span class="shelf-tag">'+tag+'</span><h3>'+esc(ep.titulo)+'</h3><div class="meta"><span>'+metaLabel+'</span><span class="score">'+(ep.specialStatus?"PT-BR":ep.estreia?"NOVA SÉRIE":"EP. "+(ep.episodio||"—"))+'</span></div></div></a>';
   }).join("")+'<div class="status" style="flex-basis:100%">Lançamentos recentes dos últimos 7 dias e agenda dos próximos 7 dias. Horários de Brasília. Recentes: <a href="https://komacal.com/it/anime/189123-ao-no-hako-season-2" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Komacal</a>, <a href="https://animeflix.com.br/black-clover-temporada-2-episodio-6-data-hora-de-estreia-e-previas/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">AnimeFlix</a> e <a href="https://criticalhits.com.br/anime/tokyo-revengers-revela-calendario-completo-da-4a-temporada/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Critical Hits</a>. Próximos episódios: <a href="https://cosmonautageek.com/api/" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Cosmonauta Geek</a> · licença CC BY 4.0. Atualizada'+(updated?" em "+updated:"")+'.</div>';
  }catch(e){
