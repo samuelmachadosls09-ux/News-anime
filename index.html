@@ -360,15 +360,15 @@ async function fillEpisodes(){
    seen.add(key);
    return true;
   }).map(ep=>({...ep,recent:true,scheduleOnly:true}));
-  const recent=[...recentItems,...elapsedItems].sort((a,b)=>(b.data+timeFor(b)).localeCompare(a.data+timeFor(a))).slice(0,20);
+  const recent=[...recentItems,...elapsedItems].sort((a,b)=>(b.data+timeFor(b)).localeCompare(a.data+timeFor(a))).slice(0,10);
   const upcomingItems=scheduledItems.filter(ep=>{
    const timestamp=Date.parse(ep.data+"T"+timeFor(ep)+":00-03:00");
-   if(!Number.isFinite(timestamp)||timestamp<=now)return false;
+   if(!Number.isFinite(timestamp)||timestamp<=now||timestamp>now+week)return false;
    const key=norm(ep.titulo)+"|"+ep.data+"|"+(ep.episodio||"estreia");
    if(!key||seen.has(key))return false;
    seen.add(key);
    return true;
-  }).sort((a,b)=>(a.data+timeFor(a)).localeCompare(b.data+timeFor(b))).slice(0,Math.max(0,20-recent.length));
+  }).sort((a,b)=>(a.data+timeFor(a)).localeCompare(b.data+timeFor(b))).slice(0,10);
   const items=[...recent,...upcomingItems];
   if(!items.length){
    target.innerHTML='<div class="status">Nenhum episódio recente ou futuro foi encontrado na agenda.</div>';
@@ -431,123 +431,125 @@ document.getElementById('closeModal').onclick=()=>document.getElementById('modal
 /* Notícias atuais: nove matérias verificadas, com leitura dentro do News Anime */
 const newsItems=[
  {
-  "kicker": "ESTREIA DA DUBLAGEM · 12 NOV 2026",
-  "date": "12/11/2026",
-  "sourceDate": "06/11/2026",
-  "sourceName": "Canaltech · anúncio da Toei Animation e Crunchyroll",
-  "title": "Dragon Ball Super: Beerus estreia dublado em português no Brasil",
-  "summary": "A dublagem brasileira da edição aprimorada de Dragon Ball Super foi marcada para 12 de novembro, às 13h (horário de Brasília), exclusivamente na Crunchyroll. Os novos episódios dublados serão lançados semanalmente.",
-  "details": [
-   "A Toei Animation e a Crunchyroll anunciaram a estreia da versão em português brasileiro para 12 de novembro, às 13h, no horário de Brasília. A série já vinha sendo exibida com áudio japonês e legendas em português desde outubro.",
-   "O elenco brasileiro confirmado inclui Wendel Bezerra como Goku, Alfredo Rollo como Vegeta, Marcelo Pissardini como Beerus (Bills) e Felipe Grinnan como Whis. O anúncio foi divulgado em 5 de novembro; o Canaltech publicou os detalhes em 6 de novembro."
-  ],
-  "image": "https://tl.ctcdn.com.br/Buerdr8QlEWeB8l6KwDX_FySbN4%3D/640x360/smart/filters%3Aformat%28webp%29%3Aquality%2885%29/fe1547c0-b78b-4485-a43b-ac7b5e9a9333.jpg",
-  "source": "https://canaltech.com.br/entretenimento/dublagem-de-dragon-ball-super-beerus-estreia-em-novembro-veja-elenco/"
- },
-{
-  "kicker": "PARCERIA E INVESTIMENTO · 11 NOV 2026",
-  "date": "11/11/2026",
-  "sourceName": "CyberAgent · comunicado oficial",
-  "title": "CyberAgent fecha parceria com MAPPA e investe na empresa-mãe do estúdio",
-  "summary": "As empresas anunciaram uma aliança para ampliar projetos de anime, da produção e distribuição a jogos, produtos e eventos. A participação adquirida pela CyberAgent na MHD não teve percentual divulgado.",
-  "details": [
-   "O acordo combina a capacidade de produção e licenciamento da MAPPA com a experiência da CyberAgent em mídia, jogos e publicidade. As empresas já haviam colaborado em planejamento, transmissão, streaming e adaptações de jogos.",
-   "A MAPPA é descrita no comunicado como um estúdio independente. O anúncio não confirma novos títulos nem mudanças em produções específicas."
-  ],
-  "image": "https://d1kdu080g8vme4.cloudfront.net/files/topics/34003_ext_03_en_0.jpg?height=464&v=1794370131&version=1794370131&width=824",
-  "source": "https://www.cyberagent.co.jp/en/news/detail/id=34003"
+   "kicker": "ESTREIA NOS CINEMAS JAPONESES · 13 NOV 2026",
+   "date": "13/11/2026",
+   "sourceDate": "13/10/2026",
+   "sourceName": "AnimeTV · trailer e ficha técnica",
+   "title": "Expelled from Paradise: Resonance of the Heart estreia no Japão",
+   "summary": "A sequência do filme de 2014 chegou aos cinemas japoneses em 13 de novembro. Seiji Mizushima retorna à direção, Gen Urobuchi assina o roteiro e a Toei Animation produz o longa.",
+   "details": [
+     "Resonance of the Heart retoma o universo de Expelled from Paradise. O trailer principal e o novo visual foram divulgados antes da estreia, com a volta de parte importante da equipe criativa do primeiro filme.",
+     "A data confirmada é a estreia japonesa. Não foi encontrada confirmação de lançamento nos cinemas brasileiros ou em streaming para o Brasil."
+   ],
+   "image": "https://animetv-jp.net/wp-content/uploads/2026/10/filters_quality95formatwebp-2026-10-13T195018.265-695x391.webp",
+   "source": "https://animetv-jp.net/expelled-from-paradise-resonance-of-the-heart-anime-film-reveals-main-trailer-key-visual-and-theme-song/"
  },
  {
-  "kicker": "PRÉVIA DO EPISÓDIO 57 · 11 NOV 2026",
-  "date": "11/11/2026",
-  "sourceName": "Pony Canyon · prévia oficial",
-  "title": "Tokyo Revengers divulga sinopse e prévias do episódio 57",
-  "summary": "O episódio “A sense of foreboding” acompanha Takemichi após despertar uma nova habilidade e ter uma visão preocupante sobre Senju. A exibição japonesa está marcada para 13 de novembro, às 1h23 (JST).",
-  "details": [
-   "Na reunião da Brahman, Senju revela que pretende iniciar a Guerra dos Três Titãs contra Kanto Manji e Rokuhara Tandai. Antes do confronto, ela e Takemichi se aproximam durante um passeio ao parque de diversões.",
-   "O horário de 1h23 é o da transmissão japonesa informado pela TBS (JST). A estreia no Disney+ Brasil segue a programação local da plataforma."
-  ],
-  "image": "https://cimg.kgl-systems.io/camion/files/dengeki/78288/afe5df232cafa4c4e0f1a0294418e5660.jpg?x=1280",
-  "source": "https://news.ponycanyon.co.jp/2026/11/127711"
+   "kicker": "NOVOS VISUAIS E PVs · 12 NOV 2026",
+   "date": "12/11/2026",
+   "sourceName": "Pony Canyon · comunicado oficial; AnimeTV",
+   "title": "Red Riding Hood: A Detective Story revela visuais e PVs de Chapeuzinho e Pinóquio",
+   "summary": "O anime divulgou artes e vídeos individuais dos protagonistas. A série de mistério inspirada em contos de fadas está prevista para janeiro de 2027 e terá transmissão internacional pela Crunchyroll.",
+   "details": [
+     "Os vídeos mostram cenas inéditas e destacam a personalidade de Chapeuzinho Vermelho e Pinóquio. Yume Miyamoto interpreta Chapeuzinho, e Akira Sekine dá voz a Pinóquio.",
+     "Itsuro Kawasaki dirige e assina o roteiro, com animação da BENTEN Film. A estreia japonesa está prevista para janeiro de 2027; o dia exato ainda não foi divulgado."
+   ],
+   "image": "https://animetv-jp.net/wp-content/uploads/2026/11/HW1tvvvacAAz79W-695x391.jpeg",
+   "source": "https://news.ponycanyon.co.jp/2026/11/127759"
  },
  {
-  "kicker": "3ª TEMPORADA · 11 NOV 2026",
-  "date": "11/11/2026",
-  "sourceName": "JBox · anúncio da Aniplex",
-  "title": "Mashle: 3ª temporada estreia em 9 de janeiro de 2027",
-  "summary": "O primeiro trailer completo e um novo pôster foram divulgados. Soma Saito e Ryota Suzuki entram no elenco como Domina Blowelive e Levi Rosequartz.",
-  "details": [
-   "A temporada adapta o arco Tri-Magic-Athalon Divine Visionary Final Exam. A animação continua com a A-1 Pictures, sob direção de Tomonari Tanaka e roteiro de Yosuke Kuroda.",
-   "A estreia japonesa está marcada para 9 de janeiro de 2027. A Crunchyroll confirmou a transmissão internacional; o horário ainda não foi divulgado."
-  ],
-  "image": "https://img.youtube.com/vi/4cBRNisl5qA/hqdefault.jpg",
-  "source": "https://www.jbox.com.br/2026/11/11/mashle-magia-e-musculos-divulga-teaser-poster-e-atores-da-3a-temporada/"
+   "kicker": "ESTREIA DA DUBLAGEM · 12 NOV 2026",
+   "date": "12/11/2026",
+   "sourceDate": "06/11/2026",
+   "sourceName": "Canaltech · anúncio da Toei Animation e Crunchyroll",
+   "title": "Dragon Ball Super: Beerus estreia dublado em português no Brasil",
+   "summary": "A dublagem brasileira da edição aprimorada de Dragon Ball Super foi marcada para 12 de novembro, às 13h (horário de Brasília), exclusivamente na Crunchyroll. Os novos episódios dublados serão lançados semanalmente.",
+   "details": [
+     "A Toei Animation e a Crunchyroll anunciaram a estreia da versão em português brasileiro para 12 de novembro, às 13h, no horário de Brasília. A série já vinha sendo exibida com áudio japonês e legendas em português desde outubro.",
+     "O elenco brasileiro confirmado inclui Wendel Bezerra como Goku, Alfredo Rollo como Vegeta, Marcelo Pissardini como Beerus (Bills) e Felipe Grinnan como Whis. O anúncio foi divulgado em 5 de novembro; o Canaltech publicou os detalhes em 6 de novembro."
+   ],
+   "image": "https://tl.ctcdn.com.br/Buerdr8QlEWeB8l6KwDX_FySbN4%3D/640x360/smart/filters%3Aformat%28webp%29%3Aquality%2885%29/fe1547c0-b78b-4485-a43b-ac7b5e9a9333.jpg",
+   "source": "https://canaltech.com.br/entretenimento/dublagem-de-dragon-ball-super-beerus-estreia-em-novembro-veja-elenco/"
  },
  {
-  "kicker": "PRÉVIA DO EPISÓDIO 7 · 11 NOV 2026",
-  "date": "11/11/2026",
-  "sourceName": "Anime Corner · prévia oficial",
-  "title": "Black Clover divulga prévias do episódio 7 da 2ª temporada",
-  "summary": "O episódio 177 na contagem geral, “Beyond Never Giving Up”, mostra Asta e Luck chegando para reforçar Noelle e os Cavaleiros Mágicos contra Megicula.",
-  "details": [
-   "A sinopse oficial indica que a magia de maldição de Megicula impede os Cavaleiros de agir livremente. A chegada de Asta e Luck inicia uma nova ofensiva contra o demônio.",
-   "O episódio está previsto para sábado, 14 de novembro. A estreia na Crunchyroll Brasil está prevista para 12h (horário de Brasília)."
-  ],
-  "image": "https://m.imageimg.net/upload/artist_img/BCLVR-OFCL-0002/03f5fa53c98027737aae0899688a495248d0181c_6aeaba1e77834.jpg",
-  "source": "https://animecorner.me/black-clover-season-2-episode-7-preview-continues-fight-against-megicula/"
+   "kicker": "PARCERIA E INVESTIMENTO · 11 NOV 2026",
+   "date": "11/11/2026",
+   "sourceName": "CyberAgent · comunicado oficial",
+   "title": "CyberAgent fecha parceria com MAPPA e investe na empresa-mãe do estúdio",
+   "summary": "As empresas anunciaram uma aliança para ampliar projetos de anime, da produção e distribuição a jogos, produtos e eventos. A participação adquirida pela CyberAgent na MHD não teve percentual divulgado.",
+   "details": [
+     "O acordo combina a capacidade de produção e licenciamento da MAPPA com a experiência da CyberAgent em mídia, jogos e publicidade. As empresas já haviam colaborado em planejamento, transmissão, streaming e adaptações de jogos.",
+     "A MAPPA é descrita no comunicado como um estúdio independente. O anúncio não confirma novos títulos nem mudanças em produções específicas."
+   ],
+   "image": "https://d1kdu080g8vme4.cloudfront.net/files/topics/34003_ext_03_en_0.jpg?height=464&v=1794370131&version=1794370131&width=824",
+   "source": "https://www.cyberagent.co.jp/en/news/detail/id=34003"
  },
  {
-  "kicker": "NOVO ANIME · 11 NOV 2026",
-  "date": "11/11/2026",
-  "sourceName": "Pony Canyon · comunicado oficial",
-  "title": "Nanatsu-ya: Shinobu and Her Jewelry Box ganhará anime em 2027",
-  "summary": "O mangá de Tomoko Ninomiya foi anunciado como série de TV para 2027, com teaser, visual e equipe principal revelados. A produção ficará a cargo da J.C.STAFF.",
-  "details": [
-   "Chiaki Kon dirige a série, Seishi Minakami cuida da composição e Mai Furuki assina o design de personagens. A história acompanha uma jovem ligada a uma casa de penhores e seu dom para perceber a energia das pedras preciosas.",
-   "A estreia foi anunciada apenas para 2027; ainda não há mês, dia ou elenco de voz confirmados."
-  ],
-  "image": "https://media.eiga.com/images/anime/news/127855/photo/b160c3a944014e2b/320.jpg",
-  "source": "https://news.ponycanyon.co.jp/2026/11/127721"
+   "kicker": "PRÉVIA DO EPISÓDIO 57 · 11 NOV 2026",
+   "date": "11/11/2026",
+   "sourceName": "Pony Canyon · prévia oficial",
+   "title": "Tokyo Revengers divulga sinopse e prévias do episódio 57",
+   "summary": "O episódio “A sense of foreboding” acompanha Takemichi após despertar uma nova habilidade e ter uma visão preocupante sobre Senju. A exibição japonesa está marcada para 13 de novembro, às 1h23 (JST).",
+   "details": [
+     "Na reunião da Brahman, Senju revela que pretende iniciar a Guerra dos Três Titãs contra Kanto Manji e Rokuhara Tandai. Antes do confronto, ela e Takemichi se aproximam durante um passeio ao parque de diversões.",
+     "O horário de 1h23 é o da transmissão japonesa informado pela TBS (JST). A estreia no Disney+ Brasil segue a programação local da plataforma."
+   ],
+   "image": "https://cimg.kgl-systems.io/camion/files/dengeki/78288/afe5df232cafa4c4e0f1a0294418e5660.jpg?x=1280",
+   "source": "https://news.ponycanyon.co.jp/2026/11/127711"
  },
  {
-  "kicker": "2ª TEMPORADA · 11 NOV 2026",
-  "date": "11/11/2026",
-  "sourceName": "Site oficial de Berserk of Gluttony",
-  "title": "Berserk of Gluttony confirma 2ª temporada para abril de 2027",
-  "summary": "A continuação ganhou mês de estreia e um novo teaser visual. O anúncio oficial confirmou que a série retorna em abril de 2027.",
-  "details": [
-   "O site oficial divulgou a nova arte promocional junto da confirmação da segunda temporada. A primeira temporada continua disponível em serviços de streaming.",
-   "O dia exato, o horário de transmissão, o elenco e a distribuição internacional da nova temporada ainda não foram anunciados."
-  ],
-  "image": "https://thetv.jp/i/nw/1382383/ogp_VBaKjpRQ.jpg?w=1284",
-  "source": "https://bousyoku-anime.com/news/157/"
+   "kicker": "3ª TEMPORADA · 11 NOV 2026",
+   "date": "11/11/2026",
+   "sourceName": "JBox · anúncio da Aniplex",
+   "title": "Mashle: 3ª temporada estreia em 9 de janeiro de 2027",
+   "summary": "O primeiro trailer completo e um novo pôster foram divulgados. Soma Saito e Ryota Suzuki entram no elenco como Domina Blowelive e Levi Rosequartz.",
+   "details": [
+     "A temporada adapta o arco Tri-Magic-Athalon Divine Visionary Final Exam. A animação continua com a A-1 Pictures, sob direção de Tomonari Tanaka e roteiro de Yosuke Kuroda.",
+     "A estreia japonesa está marcada para 9 de janeiro de 2027. A Crunchyroll confirmou a transmissão internacional; o horário ainda não foi divulgado."
+   ],
+   "image": "https://img.youtube.com/vi/4cBRNisl5qA/hqdefault.jpg",
+   "source": "https://www.jbox.com.br/2026/11/11/mashle-magia-e-musculos-divulga-teaser-poster-e-atores-da-3a-temporada/"
  },
  {
-  "kicker": "VÍDEO ESPECIAL · 10 NOV 2026",
-  "date": "10/11/2026",
-  "sourceName": "Portal oficial de JoJo",
-  "title": "Steel Ball Run lança vídeo especial dedicado aos Stands",
-  "summary": "O especial “HERE COME THE STANDS” reúne habilidades já apresentadas na série e inclui cenas inéditas. O vídeo foi divulgado pela equipe oficial da franquia.",
-  "details": [
-   "O material destaca os Stands que já apareceram na história e suas habilidades, antecipando novos confrontos. Há versões japonesa e inglesa no canal da Warner Bros. Japan Anime.",
-   "O vídeo é promocional e não altera o calendário da série: os novos episódios continuam chegando às sextas-feiras na Netflix."
-  ],
-  "image": "https://img.youtube.com/vi/66oQRrA9_HE/hqdefault.jpg",
-  "source": "https://jojo-portal.com/news/anime/670/"
+   "kicker": "PRÉVIA DO EPISÓDIO 7 · 11 NOV 2026",
+   "date": "11/11/2026",
+   "sourceName": "Anime Corner · prévia oficial",
+   "title": "Black Clover divulga prévias do episódio 7 da 2ª temporada",
+   "summary": "O episódio 177 na contagem geral, “Beyond Never Giving Up”, mostra Asta e Luck chegando para reforçar Noelle e os Cavaleiros Mágicos contra Megicula.",
+   "details": [
+     "A sinopse oficial indica que a magia de maldição de Megicula impede os Cavaleiros de agir livremente. A chegada de Asta e Luck inicia uma nova ofensiva contra o demônio.",
+     "O episódio está previsto para sábado, 14 de novembro. A estreia na Crunchyroll Brasil está prevista para 12h (horário de Brasília)."
+   ],
+   "image": "https://m.imageimg.net/upload/artist_img/BCLVR-OFCL-0002/03f5fa53c98027737aae0899688a495248d0181c_6aeaba1e77834.jpg",
+   "source": "https://animecorner.me/black-clover-season-2-episode-7-preview-continues-fight-against-megicula/"
  },
  {
-  "kicker": "NOVA ADAPTAÇÃO · 10 NOV 2026",
-  "date": "10/11/2026",
-  "sourceName": "Manga Box · comunicado oficial",
-  "title": "My Death Flags Show No Sign of Ending ganhará anime em 2027",
-  "summary": "A fantasia de reencarnação em vilão, criada por Izumi e adaptada em mangá por Mitsuya Otosu, foi confirmada como série de TV para 2027. A franquia ultrapassou 1,75 milhão de cópias em circulação.",
-  "details": [
-   "Na trama, Kazuki Hirasawa desperta no corpo de Harold Stokes, o vilão do jogo Brave Hearts. Para escapar do destino de morrer pelas mãos dos heróis, ele usa o conhecimento que tem do jogo e as habilidades do personagem para tentar encontrar uma rota de sobrevivência.",
-   "O anúncio confirmou o ano de estreia e trouxe uma ilustração comemorativa. Estúdio, equipe de produção, elenco e data exata ainda não foram divulgados."
-  ],
-  "image": "https://mangabox.ink/_nuxt/KV_PC.Dff8z4yj.jpg",
-  "source": "https://prtimes.jp/main/html/rd/p/000000054.000070922.html"
+   "kicker": "NOVO ANIME · 11 NOV 2026",
+   "date": "11/11/2026",
+   "sourceName": "Pony Canyon · comunicado oficial",
+   "title": "Nanatsu-ya: Shinobu and Her Jewelry Box ganhará anime em 2027",
+   "summary": "O mangá de Tomoko Ninomiya foi anunciado como série de TV para 2027, com teaser, visual e equipe principal revelados. A produção ficará a cargo da J.C.STAFF.",
+   "details": [
+     "Chiaki Kon dirige a série, Seishi Minakami cuida da composição e Mai Furuki assina o design de personagens. A história acompanha uma jovem ligada a uma casa de penhores e seu dom para perceber a energia das pedras preciosas.",
+     "A estreia foi anunciada apenas para 2027; ainda não há mês, dia ou elenco de voz confirmados."
+   ],
+   "image": "https://media.eiga.com/images/anime/news/127855/photo/b160c3a944014e2b/320.jpg",
+   "source": "https://news.ponycanyon.co.jp/2026/11/127721"
+ },
+ {
+   "kicker": "2ª TEMPORADA · 11 NOV 2026",
+   "date": "11/11/2026",
+   "sourceName": "Site oficial de Berserk of Gluttony",
+   "title": "Berserk of Gluttony confirma 2ª temporada para abril de 2027",
+   "summary": "A continuação ganhou mês de estreia e um novo teaser visual. O anúncio oficial confirmou que a série retorna em abril de 2027.",
+   "details": [
+     "O site oficial divulgou a nova arte promocional junto da confirmação da segunda temporada. A primeira temporada continua disponível em serviços de streaming.",
+     "O dia exato, o horário de transmissão, o elenco e a distribuição internacional da nova temporada ainda não foram anunciados."
+   ],
+   "image": "https://thetv.jp/i/nw/1382383/ogp_VBaKjpRQ.jpg?w=1284",
+   "source": "https://bousyoku-anime.com/news/157/"
  }
+]
 ];
 function openNews(index){
  const item=newsItems[index];
