@@ -161,6 +161,16 @@ body{background:radial-gradient(ellipse at 50% 0%,#1b0c2d 0%,#080511 48%,#07040d
 
 
 .story-hero .hero-copy{z-index:2}
+
+/* Posiciona a mini TV na área indicada da imagem, em telas de celular */
+@media(max-width:560px){
+  .story-hero #miniTv{
+    top:67%;
+    left:64%;
+    right:auto;
+    transform:translate(-50%,-50%);
+  }
+}
 </style>
 </head>
 <body>
