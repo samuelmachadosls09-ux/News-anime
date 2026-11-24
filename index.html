@@ -356,7 +356,7 @@ async function fillEpisodes(){
   target.innerHTML='<div class="status">Não foi possível carregar a agenda de episódios agora. Tente novamente mais tarde.</div>';
  }
 }
-const curatedRecommendations=["Black Clover 2nd Season","Kusuriya no Hitorigoto 3rd Season","Ao no Hako Season 2","Ao Ashi Season 2","Overgeared","Dragon Ball Super: Beerus","Tokyo Revengers: Santen Sensou-hen","Sousou no Frieren","Ore dake Level Up na Ken","One Piece","Boku no Hero Academia","Fullmetal Alchemist: Brotherhood","Dandadan","Shingeki no Kyojin","A Place Further Than The Universe","Barakamon","Odd Taxi","The Tatami Galaxy","Keep Your Hands Off Eizouken!","Natsume's Book of Friends"];
+const curatedRecommendations=["Black Clover 2nd Season","Kusuriya no Hitorigoto 3rd Season","Ao no Hako Season 2","Ao Ashi Season 2","Overgeared","Dragon Ball Super: Beerus","Tokyo Revengers: Santen Sensou-hen","Sousou no Frieren","Ore dake Level Up na Ken","One Piece","Naruto","Dragon Ball","Boku no Hero Academia","Fullmetal Alchemist: Brotherhood","Dandadan","Shingeki no Kyojin","Odd Taxi","The Tatami Galaxy","Keep Your Hands Off Eizouken!","Natsume's Book of Friends"];
 async function fillRecommendations(){
  const target=document.getElementById('recommendationsGrid');
  target.innerHTML='<div class="status">Escolhendo 20 animes para você descobrir...</div>';
@@ -399,125 +399,123 @@ document.getElementById('closeModal').onclick=()=>document.getElementById('modal
 
 /* Notícias atuais: nove matérias verificadas, com leitura dentro do News Anime */
 const newsItems=[
-{
-  "kicker": "2ª TEMPORADA EM 2027 · TRAILER E NOVAS VOZES · 17 NOV 2026",
-  "date": "17/11/2026",
-  "sourceName": "Anime Corner · anúncio e site oficial",
-  "title": "Mistress Kanan is Devilishly Easy 2 EASY ganha primeiro trailer",
-  "summary": "A segunda temporada ganhou seu primeiro vídeo promocional, novo visual e quatro nomes no elenco. A estreia está prevista para 2027, ainda sem mês ou dia confirmados.",
-  "details": [
-    "A continuação recebeu o título Mistress Kanan is Devilishly Easy 2 EASY. Misato Matsuoka, Miku Itō, Miyu Tomita e Lynn foram anunciadas em novos papéis.",
-    "O Studio KAI retorna à animação, com Yasushi Muroya novamente na direção. A produção ainda não divulgou a data exata nem a distribuição da nova temporada no Brasil."
-  ],
-  "image": "https://www.madinfinite.com/static/images/big/19/mistress-kanan-is-devilishly-easy-anime-gets-second-season-018583.webp",
-  "source": "https://animecorner.me/mistress-kanan-is-devilishly-easy-season-2-anime-reveals-visual-trailer-additional-cast/"
-},
-{
-  "kicker": "ESTREIA EM 10 JAN 2027 · NOVO TEASER · 17 NOV 2026",
-  "date": "17/11/2026",
-  "sourceName": "TV Asahi · site oficial",
-  "title": "Josemaru revela novo teaser e confirma estreia para 10 de janeiro",
-  "summary": "O anime curto sobre um pequeno cãozinho branco estreia em 10 de janeiro de 2027, no bloco PicoAniTime da TV Asahi. A produção também apresentou novos personagens e vozes.",
-  "details": [
-    "A série mistura animação 2D na história com cenas em stop-motion nas aberturas e encerramentos. Josemaru é um cachorrinho que tenta lidar com situações comuns da vida de um jeito divertido e afetuoso.",
-    "A estreia está marcada para todos os domingos, às 10h no horário japonês. Até o momento, não há confirmação de exibição ou streaming no Brasil."
-  ],
-  "image": "https://www.tv-asahi.co.jp/josemaru/img/top/mv02.jpg",
-  "source": "https://www.tv-asahi.co.jp/josemaru/"
-},
-{
-  "kicker": "ESPECIAL ANIMADO · PARCERIA COM A MCLAREN · 17 NOV 2026",
-  "date": "17/11/2026",
-  "sourceName": "Anime News Network · comunicado da franquia Sonic",
-  "title": "Sonic e McLaren anunciam especial animado com três episódios",
-  "summary": "Sonic the Hedgehog x McLaren Racing: Beyond Fast ganhou um teaser e terá três episódios. A parceria também chega ao jogo Sonic Racing: CrossWorlds com conteúdo gratuito.",
-  "details": [
-    "O teaser foi divulgado pelos canais oficiais de Sonic. A animação celebra a colaboração entre a franquia e a equipe McLaren Racing, que já mantêm uma parceria de vários anos.",
-    "No jogo Sonic Racing: CrossWorlds, a versão Sonic (McLaren Racing) foi anunciada como atualização gratuita de 17 de novembro. Um evento temático da McLaren está previsto para começar em 19 de novembro."
-  ],
-  "image": "https://files.merca20.com/uploads/2025/06/sonic-mclaren-colabortacion.jpg",
-  "source": "https://my.worldacg.com/news/2026-11-17/sonic-the-hedgehog-mclaren-racing-collaborates-on-3-episode-animated-special/.243899"
-},
-{
-   "kicker": "MANGÁ CONCLUÍDO · 2ª TEMPORADA EM 2027 · 16 NOV 2026",
-   "date": "16/11/2026",
-   "sourceName": "ANIDT · AnimeNewsNetwork e anúncio oficial",
-   "title": "Witch Watch chega ao fim no mangá e confirma 2ª temporada do anime",
-   "summary": "A obra de Kenta Shinohara encerrou sua publicação na Weekly Shonen Jump. A segunda temporada do anime ganhou teaser visual e estreia prevista para 2027.",
-   "details": [
-     "O mangá terminou na 51ª edição da Weekly Shonen Jump. A série começou em fevereiro de 2021 e teve seu 23º volume publicado em setembro de 2026.",
-     "A continuação do anime foi confirmada para 2027, mas ainda não tem mês ou dia de estreia. A primeira temporada estreou em abril de 2025."
-   ],
-   "image": "https://cdn-s3.anidt.net/animes/witch-watch/cover.webp",
-   "source": "https://anidt.net/noticias/witch-watch-manga-fim-s2-2027"
- },
-{
-   "kicker": "ADAPTAÇÃO ANUNCIADA · 16 NOV 2026",
-   "date": "16/11/2026",
-   "sourceName": "ANIDT · AnimeNewsNetwork, Natalie e site oficial",
-   "title": "The Days of Diamond ganhará anime de TV pelo estúdio Lapin Track",
-   "summary": "O mangá de beisebol de Ōhashi Hirai foi confirmado como anime. A produção revelou o estúdio e a equipe principal, mas ainda não anunciou estreia nem elenco.",
-   "details": [
-     "Takakazu Nagatomo dirige a série no estúdio Lapin Track. Chigusa Kiyota assume a direção assistente, Atsushi Saitō desenha os personagens e Teruko Utsumi cuida da composição e do roteiro.",
-     "A obra acompanha Jirō Ayasegawa, um adolescente com talento excepcional para esportes e os desafios que enfrenta no beisebol. O mangá já ultrapassou 2 milhões de cópias em circulação."
-   ],
-   "image": "https://cdn-s3.anidt.net/animes/days/cover.webp",
-   "source": "https://anidt.net/noticias/days-of-diamond-anime-tv"
- },
-{
-   "kicker": "ESTREIA EM 6 JAN 2027 · 16 NOV 2026",
-   "date": "16/11/2026",
-   "sourceName": "ANIDT · anúncio do site oficial",
-   "title": "Wanpaku! Touken Ranbu estreia em janeiro com visual da Sanrio",
-   "summary": "O anime de curtas chega à TV japonesa em 6 de janeiro de 2027. A produção terá personagens redesenhados no estilo fofo característico da Sanrio.",
-   "details": [
-     "A série será exibida às quartas-feiras na Tokyo MX. Gaku Kinoshita dirige no estúdio Fanworks, com roteiros de Rieko Ebisu e direção de arte de Midori Shimada.",
-     "O projeto transforma os guerreiros-espada da franquia Touken Ranbu em personagens de histórias cotidianas e acolhedoras. Ainda não há informação confirmada sobre distribuição no Brasil."
-   ],
-   "image": "https://pub-5fc51d14ac37429cacbb12f383ff1532.r2.dev/animes/home/cover.webp",
-   "source": "https://anidt.net/noticias/wanpaku-touken-ranbu-estreia-janeiro-2027"
- },
-{
-   "kicker": "ESTREIA NOS CINEMAS JAPONESES · 13 NOV 2026",
-   "date": "13/11/2026",
-   "sourceDate": "13/10/2026",
-   "sourceName": "AnimeTV · trailer e ficha técnica",
-   "title": "Expelled from Paradise: Resonance of the Heart estreia no Japão",
-   "summary": "A sequência do filme de 2014 chegou aos cinemas japoneses em 13 de novembro. Seiji Mizushima retorna à direção, Gen Urobuchi assina o roteiro e a Toei Animation produz o longa.",
-   "details": [
-     "Resonance of the Heart retoma o universo de Expelled from Paradise. O trailer principal e o novo visual foram divulgados antes da estreia, com a volta de parte importante da equipe criativa do primeiro filme.",
-     "A data confirmada é a estreia japonesa. Não foi encontrada confirmação de lançamento nos cinemas brasileiros ou em streaming para o Brasil."
-   ],
-   "image": "https://animetv-jp.net/wp-content/uploads/2026/10/filters_quality95formatwebp-2026-10-13T195018.265-695x391.webp",
-   "source": "https://animetv-jp.net/expelled-from-paradise-resonance-of-the-heart-anime-film-reveals-main-trailer-key-visual-and-theme-song/"
- },
-{
-   "kicker": "NOVOS VISUAIS E PVs · 12 NOV 2026",
-   "date": "12/11/2026",
-   "sourceName": "Pony Canyon · comunicado oficial; AnimeTV",
-   "title": "Red Riding Hood: A Detective Story revela visuais e PVs de Chapeuzinho e Pinóquio",
-   "summary": "O anime divulgou artes e vídeos individuais dos protagonistas. A série de mistério inspirada em contos de fadas está prevista para janeiro de 2027 e terá transmissão internacional pela Crunchyroll.",
-   "details": [
-     "Os vídeos mostram cenas inéditas e destacam a personalidade de Chapeuzinho Vermelho e Pinóquio. Yume Miyamoto interpreta Chapeuzinho, e Akira Sekine dá voz a Pinóquio.",
-     "Itsuro Kawasaki dirige e assina o roteiro, com animação da BENTEN Film. A estreia japonesa está prevista para janeiro de 2027; o dia exato ainda não foi divulgado."
-   ],
-   "image": "https://animetv-jp.net/wp-content/uploads/2026/11/HW1tvvvacAAz79W-695x391.jpeg",
-   "source": "https://news.ponycanyon.co.jp/2026/11/127759"
- },
-{
-   "kicker": "ESTREIA DA DUBLAGEM · 12 NOV 2026",
-   "date": "12/11/2026",
-   "sourceDate": "06/11/2026",
-   "sourceName": "Canaltech · anúncio da Toei Animation e Crunchyroll",
-   "title": "Dragon Ball Super: Beerus estreia dublado em português no Brasil",
-   "summary": "A dublagem brasileira da edição aprimorada de Dragon Ball Super foi marcada para 12 de novembro, às 13h (horário de Brasília), exclusivamente na Crunchyroll. Os novos episódios dublados serão lançados semanalmente.",
-   "details": [
-     "A Toei Animation e a Crunchyroll anunciaram a estreia da versão em português brasileiro para 12 de novembro, às 13h, no horário de Brasília. A série já vinha sendo exibida com áudio japonês e legendas em português desde outubro.",
-     "O elenco brasileiro confirmado inclui Wendel Bezerra como Goku, Alfredo Rollo como Vegeta, Marcelo Pissardini como Beerus (Bills) e Felipe Grinnan como Whis. O anúncio foi divulgado em 5 de novembro; o Canaltech publicou os detalhes em 6 de novembro."
-   ],
-   "image": "https://tl.ctcdn.com.br/Buerdr8QlEWeB8l6KwDX_FySbN4%3D/640x360/smart/filters%3Aformat%28webp%29%3Aquality%2885%29/fe1547c0-b78b-4485-a43b-ac7b5e9a9333.jpg",
-   "source": "https://canaltech.com.br/entretenimento/dublagem-de-dragon-ball-super-beerus-estreia-em-novembro-veja-elenco/"
- }
+  {
+    "kicker": "SEQUÊNCIA CONFIRMADA · SEM DATA · 24 NOV 2026",
+    "date": "24/11/2026",
+    "sourceName": "Anime.com · anúncio da conta oficial do filme",
+    "title": "Witch on the Holy Night confirma sequência do filme",
+    "summary": "O filme recebeu confirmação de uma continuação em 24 de novembro. A produção ainda não revelou título, data de estreia, equipe ou elenco da sequência.",
+    "details": [
+      "A conta oficial do filme anunciou a produção da sequência quatro dias após a estreia japonesa, em 20 de novembro. A cena pós-créditos já indicava que a história continuaria, mas o comunicado não trouxe detalhes adicionais.",
+      "O primeiro longa é animado pela ufotable. A confirmação vale para a produção da sequência; não há previsão de estreia nem informação sobre distribuição no Brasil."
+    ],
+    "image": "https://assets.anime.com/updates-media/news-hero/witch-on-the-holy-night-sequel-announced-c675b8ab12a46cac.jpg",
+    "source": "https://www.anime.com/news/witch-on-the-holy-night-sequel-announced"
+  },
+  {
+    "kicker": "2ª TEMPORADA ESTREIA EM 9 JAN 2027 · 24 NOV 2026",
+    "date": "24/11/2026",
+    "sourceName": "animecca · calendário oficial de transmissão",
+    "title": "Akane-banashi confirma estreia da 2ª temporada em 9 de janeiro",
+    "summary": "A segunda temporada estreia no Japão em 9 de janeiro de 2027, às 23h30 (JST), no bloco IMAnimation da TV Asahi. ABEMA e Netflix começam a exibição antecipada em 10 de janeiro; a disponibilidade no Brasil ainda não foi confirmada.",
+    "details": [
+      "O calendário oficial lista a estreia na rede TV Asahi, que reúne 24 emissoras, em 9 de janeiro às 23h30 no horário japonês. BS Asahi, TV Asahi Channel 1 e AT-X começam a exibição em 10 de janeiro.",
+      "ABEMA e Netflix iniciam o streaming às 0h de 10 de janeiro (JST). O anúncio não informa os territórios atendidos pela segunda temporada, então não é possível garantir a estreia simultânea no catálogo brasileiro."
+    ],
+    "image": "https://ogre.natalie.mu/media/news/comic/2025/1221/akanebanashi_KV.jpg?imdensity=1&impolicy=hq&imwidth=1460",
+    "source": "https://animecca.jp/en/news/2026-11-24-akanebanashi-s2-january-9-imanimation-abema"
+  },
+  {
+    "kicker": "5ª TEMPORADA EM 2027 · NOVO VISUAL · 22 NOV 2026",
+    "date": "22/11/2026",
+    "sourceName": "Site oficial · KADOKAWA",
+    "title": "Classroom of the Elite anuncia 5ª temporada para 2027",
+    "summary": "A quinta temporada ganhou título completo, visual teaser e vídeo promocional. Ela adapta a primeira metade do segundo semestre do segundo ano; ainda não há mês, dia ou plataforma confirmados.",
+    "details": [
+      "O site oficial anunciou em 22 de novembro que Classroom of the Elite 5th Season: Second Year, Second Semester (First Half) será exibida em 2027. O arco do segundo semestre foi anunciado em duas partes.",
+      "Noriyuki Nomata retorna à direção e o estúdio Lerche à animação. A produção não divulgou data exata nem serviço de streaming para a nova temporada."
+    ],
+    "image": "https://you-zitsu.com/assets/news/vis-s5-t1.webp?v2=",
+    "source": "https://you-zitsu.com/news.html"
+  },
+  {
+    "kicker": "ESTREIA EM 18 JAN 2027 · TRAILER E OPENING · 18 NOV 2026",
+    "date": "18/11/2026",
+    "sourceName": "Crunchyroll News · anúncio oficial",
+    "title": "SAKAMOTO DAYS confirma estreia da 2ª temporada para 18 de janeiro",
+    "summary": "A nova temporada estreia em 18 de janeiro de 2027 no Japão. O trailer revelou a música de abertura “Papa wa Imada ni Juvenile”, do duo Creepy Nuts, e dois novos integrantes do elenco.",
+    "details": [
+      "A série volta às segundas-feiras na TV Tokyo e afiliadas; a BS TV Tokyo começa a exibição em 24 de janeiro. A Netflix anunciou a distribuição mundial a partir de 18 de janeiro.",
+      "Kenyu Horiuchi dará voz a Byodo, funcionário veterano da JCC, e Kisho Taniyama interpretará Club Jam. A data japonesa está confirmada; a disponibilidade e o horário no catálogo brasileiro devem ser conferidos na plataforma."
+    ],
+    "image": "https://sakamotodays.jp/assets/og/ogp4.jpg",
+    "source": "https://www.crunchyroll.com/es-es/news/latest/2026/11/18/sakamoto-days-temporada-2-anime-creepy-nuts-opening-trailer"
+  },
+  {
+    "kicker": "2ª TEMPORADA EM 2027 · TRAILER E NOVAS VOZES · 17 NOV 2026",
+    "date": "17/11/2026",
+    "sourceName": "Anime Corner · anúncio e site oficial",
+    "title": "Mistress Kanan is Devilishly Easy 2 EASY ganha primeiro trailer",
+    "summary": "A segunda temporada ganhou seu primeiro vídeo promocional, novo visual e quatro nomes no elenco. A estreia está prevista para 2027, ainda sem mês ou dia confirmados.",
+    "details": [
+      "A continuação recebeu o título Mistress Kanan is Devilishly Easy 2 EASY. Misato Matsuoka, Miku Itō, Miyu Tomita e Lynn foram anunciadas em novos papéis.",
+      "O Studio KAI retorna à animação, com Yasushi Muroya novamente na direção. A produção ainda não divulgou a data exata nem a distribuição da nova temporada no Brasil."
+    ],
+    "image": "https://www.madinfinite.com/static/images/big/19/mistress-kanan-is-devilishly-easy-anime-gets-second-season-018583.webp",
+    "source": "https://animecorner.me/mistress-kanan-is-devilishly-easy-season-2-anime-reveals-visual-trailer-additional-cast/"
+  },
+  {
+    "kicker": "ESTREIA EM 10 JAN 2027 · NOVO TEASER · 17 NOV 2026",
+    "date": "17/11/2026",
+    "sourceName": "TV Asahi · site oficial",
+    "title": "Josemaru revela novo teaser e confirma estreia para 10 de janeiro",
+    "summary": "O anime curto sobre um pequeno cãozinho branco estreia em 10 de janeiro de 2027, no bloco PicoAniTime da TV Asahi. A produção também apresentou novos personagens e vozes.",
+    "details": [
+      "A série mistura animação 2D na história com cenas em stop-motion nas aberturas e encerramentos. Josemaru é um cachorrinho que tenta lidar com situações comuns da vida de um jeito divertido e afetuoso.",
+      "A estreia está marcada para todos os domingos, às 10h no horário japonês. Até o momento, não há confirmação de exibição ou streaming no Brasil."
+    ],
+    "image": "https://www.tv-asahi.co.jp/josemaru/img/top/mv02.jpg",
+    "source": "https://www.tv-asahi.co.jp/josemaru/"
+  },
+  {
+    "kicker": "ESPECIAL ANIMADO · PARCERIA COM A MCLAREN · 17 NOV 2026",
+    "date": "17/11/2026",
+    "sourceName": "Anime News Network · comunicado da franquia Sonic",
+    "title": "Sonic e McLaren anunciam especial animado com três episódios",
+    "summary": "Sonic the Hedgehog x McLaren Racing: Beyond Fast ganhou um teaser e terá três episódios. A parceria também chega ao jogo Sonic Racing: CrossWorlds com conteúdo gratuito.",
+    "details": [
+      "O teaser foi divulgado pelos canais oficiais de Sonic. A animação celebra a colaboração entre a franquia e a equipe McLaren Racing, que já mantêm uma parceria de vários anos.",
+      "No jogo Sonic Racing: CrossWorlds, a versão Sonic (McLaren Racing) foi anunciada como atualização gratuita de 17 de novembro. Um evento temático da McLaren está previsto para começar em 19 de novembro."
+    ],
+    "image": "https://files.merca20.com/uploads/2025/06/sonic-mclaren-colabortacion.jpg",
+    "source": "https://my.worldacg.com/news/2026-11-17/sonic-the-hedgehog-mclaren-racing-collaborates-on-3-episode-animated-special/.243899"
+  },
+  {
+    "kicker": "MANGÁ CONCLUÍDO · 2ª TEMPORADA EM 2027 · 16 NOV 2026",
+    "date": "16/11/2026",
+    "sourceName": "ANIDT · AnimeNewsNetwork e anúncio oficial",
+    "title": "Witch Watch chega ao fim no mangá e confirma 2ª temporada do anime",
+    "summary": "A obra de Kenta Shinohara encerrou sua publicação na Weekly Shonen Jump. A segunda temporada do anime ganhou teaser visual e estreia prevista para 2027.",
+    "details": [
+      "O mangá terminou na 51ª edição da Weekly Shonen Jump. A série começou em fevereiro de 2021 e teve seu 23º volume publicado em setembro de 2026.",
+      "A continuação do anime foi confirmada para 2027, mas ainda não tem mês ou dia de estreia. A primeira temporada estreou em abril de 2025."
+    ],
+    "image": "https://cdn-s3.anidt.net/animes/witch-watch/cover.webp",
+    "source": "https://anidt.net/noticias/witch-watch-manga-fim-s2-2027"
+  },
+  {
+    "kicker": "ADAPTAÇÃO ANUNCIADA · 16 NOV 2026",
+    "date": "16/11/2026",
+    "sourceName": "ANIDT · AnimeNewsNetwork, Natalie e site oficial",
+    "title": "The Days of Diamond ganhará anime de TV pelo estúdio Lapin Track",
+    "summary": "O mangá de beisebol de Ōhashi Hirai foi confirmado como anime. A produção revelou o estúdio e a equipe principal, mas ainda não anunciou estreia nem elenco.",
+    "details": [
+      "Takakazu Nagatomo dirige a série no estúdio Lapin Track. Chigusa Kiyota assume a direção assistente, Atsushi Saitō desenha os personagens e Teruko Utsumi cuida da composição e do roteiro.",
+      "A obra acompanha Jirō Ayasegawa, um adolescente com talento excepcional para esportes e os desafios que enfrenta no beisebol. O mangá já ultrapassou 2 milhões de cópias em circulação."
+    ],
+    "image": "https://cdn-s3.anidt.net/animes/days/cover.webp",
+    "source": "https://anidt.net/noticias/days-of-diamond-anime-tv"
+  }
 ];
 function openNews(index){
  const item=newsItems[index];
